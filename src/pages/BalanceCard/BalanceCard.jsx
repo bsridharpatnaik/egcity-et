@@ -8,6 +8,7 @@ import frame from "../../assets/Frame2.svg";
 import icon from "../../assets/Icon.svg";
 import income from "../../assets/Download.svg"
 import expense from "../../assets/Upload.svg"
+import Transaction from '../../components/Transaction';
 
 function BalanceCard() {
   const [toggle, setToggle] = useState('D');
@@ -107,55 +108,12 @@ const user=JSON.parse(localStorage.getItem("user"))
     </div>
   </div>
   <div className="transaction-history">
-    <h4>Transaction History</h4>
-    <div className="transaction-item">
-      <div className="transaction-icon">AT</div>
-      <div className="transaction-details">
-        <p>Grocery</p>
-        <p>Abhay Traders</p>
-      </div>
-      <div className="transaction-amount positive">+$278</div>
-      <div className="transaction-time">10:00 AM</div>
-    </div>
-    <div className="transaction-item">
-      <div className="transaction-icon">AC</div>
-      <div className="transaction-details">
-        <p>Household</p>
-        <p>ACC Cements</p>
-      </div>
-      <div className="transaction-amount positive">+$522</div>
-      <div className="transaction-time">10:30 AM</div>
-    </div>
-    <div className="transaction-item">
-      <div className="transaction-icon">RS</div>
-      <div className="transaction-details">
-        <p>Medicine</p>
-        <p>Reliable Suppliers</p>
-      </div>
-      <div className="transaction-amount negative">-$325</div>
-      <div className="transaction-time">10:30 AM</div>
-    </div>
-    <div className="transaction-item">
-      <div className="transaction-icon">PS</div>
-      <div className="transaction-details">
-        <p>Stationery</p>
-        <p>PaperWorks Supply</p>
-      </div>
-      <div className="transaction-amount positive">+$477</div>
-      <div className="transaction-time">11:12 AM</div>
-    </div>
-    <div className="transaction-item">
-      <div className="transaction-icon">SS</div>
-      <div className="transaction-details">
-        <p>Food & Dinner</p>
-        <p>Suite Supply</p>
-      </div>
-      <div className="transaction-amount negative">-$425</div>
-      <div className="transaction-time">10:30 AM</div>
-    </div>
-  </div>
+  <h4>Transaction History</h4>
+  {Array.from({ length: 6 }).map((val, index) => {
+    return <Transaction key={index} />;
+})}
 </div>
-
+</div>
     </div>
   );
 }

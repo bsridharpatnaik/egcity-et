@@ -7,8 +7,8 @@ import {
 } from "react-router-dom";
 import logo from "./assets/evergreen.png"
 import "./App.css";
-import Login from "./components/Login/Login";
-import BalanceCard from "./components/BalanceCard/BalanceCard";
+import BalanceCard from "./pages/BalanceCard/BalanceCard";
+import Login from "./pages/Login/Login";
 
 function SplashScreen() {
   const navigate = useNavigate();

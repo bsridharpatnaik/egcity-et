@@ -152,19 +152,25 @@ input:not([type="image" i], [type="range" i], [type="checkbox" i], [type="radio"
     border: none;
     color: #fff;
 }
-.transaction-info {
+
+.transaction-history {
   margin-top: 20px;
 }
 
+.transaction-history h4 {
+  font-size: 18px;
+  color: #181D31;
+  font-weight: 600;
+ padding: 0 0 0 17px;
+}
 .c-f {
   display: flex;
   justify-content: space-between;
-  background-color: #F7F9FC;
+  background-color: #DCDFE6;
   padding: 10px 20px;
   font-size: 14px;
   font-weight: 600;
-  color: #333;
-  border-radius: 10px;
+  color: #181D31;
 }
 
 .summary {
@@ -216,70 +222,6 @@ input:not([type="image" i], [type="range" i], [type="checkbox" i], [type="radio"
 
 .amount.negative {
   color: #DC3545;
-}
-
-.transaction-history {
-  margin-top: 20px;
-}
-
-.transaction-history h4 {
-  font-size: 18px;
-  color: #333;
-  font-weight: 600;
-  margin-bottom: 15px;
-}
-
-.transaction-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 20px;
-  background-color: #F7F9FC;
-  border-radius: 10px;
-  margin-bottom: 10px;
-}
-
-.transaction-icon {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background-color: #E1E4E8;
-  color: #555;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 18px;
-  font-weight: 600;
-  margin-right: 15px;
-}
-
-.transaction-details {
-  flex-grow: 1;
-}
-
-.transaction-details p {
-  margin: 0;
-  font-size: 14px;
-  color: #333;
-}
-
-.transaction-amount {
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.transaction-amount.positive {
-  color: #28A745;
-}
-
-.transaction-amount.negative {
-  color: #DC3545;
-}
-
-.transaction-time {
-  font-size: 12px;
-  color: #999;
-  margin-left: 10px;
 }
 
 .text{
