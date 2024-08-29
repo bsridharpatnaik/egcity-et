@@ -65,7 +65,9 @@
 							"script": {
 								"exec": [
 									"var jsonData = JSON.parse(responseBody);",
-									"postman.setEnvironmentVariable(\"fileUuid\", jsonData.fileUuid);"
+									"postman.setEnvironmentVariable(\"fileUuid\", jsonData.fileUuid);",
+									"postman.setEnvironmentVariable(\"filename\", jsonData.filename);",
+									"postman.setEnvironmentVariable(\"uploadDate\", jsonData.uploadDate);"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -73,6 +75,9 @@
 						}
 					],
 					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
@@ -110,19 +115,14 @@
 					"name": "DownloadFile",
 					"request": {
 						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "{{token}}",
-								"type": "text"
-							}
-						],
+						"header": [],
 						"url": {
-							"raw": "{{servername}}/file/download/{{fileUuid}}",
+							"raw": "{{servername}}/api/file/download/{{fileUuid}}",
 							"host": [
 								"{{servername}}"
 							],
 							"path": [
+								"api",
 								"file",
 								"download",
 								"{{fileUuid}}"
@@ -137,189 +137,11 @@
 			"name": "Transaction",
 			"item": [
 				{
-					"name": "Anonymous",
-					"item": [
-						{
-							"name": "Create",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"var jsonData = JSON.parse(responseBody);",
-											"//postman.setEnvironmentVariable(\"txId\", jsonData.id);"
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								},
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											"// Define the range of days (last 60 days)",
-											"const daysAgoStart = 60;",
-											"const daysAgoEnd = 1;",
-											"",
-											"// Generate a random number of days between 1 and 60",
-											"const randomDaysAgo = Math.floor(Math.random() * (daysAgoEnd - daysAgoStart + 1)) + daysAgoStart;",
-											"",
-											"// Calculate the date",
-											"const date = new Date();",
-											"date.setDate(date.getDate() - randomDaysAgo);",
-											"",
-											"// Format the date in dd-MM-yyyy format",
-											"const formattedDate = (\"0\" + date.getDate()).slice(-2) + \"-\" + (\"0\" + (date.getMonth() + 1)).slice(-2) + \"-\" + date.getFullYear();",
-											"",
-											"// Randomly choose between INCOME and EXPENSE",
-											"const transactionTypes = [\"INCOME\", \"EXPENSE\"];",
-											"const randomTypeIndex = Math.floor(Math.random() * transactionTypes.length);",
-											"const randomTransactionType = transactionTypes[randomTypeIndex];",
-											"",
-											"// Set the variable for date",
-											"pm.environment.set(\"randomDate\", formattedDate);",
-											"",
-											"// Set the variable for transaction type",
-											"pm.environment.set(\"randomTransactionType\", randomTransactionType);",
-											""
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"transactionType\":\"{{randomTransactionType}}\",   // possible values are INCOME/EXPENSE\n    \"date\": \"{{randomDate}}\",\n    \"title\": \"Sample Transaction\",\n    \"party\": \"{{$randomFullName}}\",\n    \"amount\": 1234.56,\n    \"files\": [\n        {\n            \"fileUuid\": \"{{$randomUUID}}\",\n            \"filename\": \"{{$randomFileName}}\"\n        }\n    ]\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{servername}}/api/transaction",
-									"host": [
-										"{{servername}}"
-									],
-									"path": [
-										"api",
-										"transaction"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Create Copy",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"var jsonData = JSON.parse(responseBody);",
-											"//postman.setEnvironmentVariable(\"txId\", jsonData.id);"
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								},
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											"// Define the range of days (last 60 days)",
-											"const daysAgoStart = 60;",
-											"const daysAgoEnd = 1;",
-											"",
-											"// Generate a random number of days between 1 and 60",
-											"const randomDaysAgo = Math.floor(Math.random() * (daysAgoEnd - daysAgoStart + 1)) + daysAgoStart;",
-											"",
-											"// Calculate the date",
-											"const date = new Date();",
-											"date.setDate(date.getDate() - randomDaysAgo);",
-											"",
-											"// Format the date in dd-MM-yyyy format",
-											"const formattedDate = (\"0\" + date.getDate()).slice(-2) + \"-\" + (\"0\" + (date.getMonth() + 1)).slice(-2) + \"-\" + date.getFullYear();",
-											"",
-											"// Randomly choose between INCOME and EXPENSE",
-											"const transactionTypes = [\"INCOME\", \"EXPENSE\"];",
-											"const randomTypeIndex = Math.floor(Math.random() * transactionTypes.length);",
-											"const randomTransactionType = transactionTypes[randomTypeIndex];",
-											"",
-											"// Set the variable for date",
-											"pm.environment.set(\"randomDate\", formattedDate);",
-											"",
-											"// Set the variable for transaction type",
-											"pm.environment.set(\"randomTransactionType\", randomTransactionType);",
-											""
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"transactionType\":\"{{randomTransactionType}}\",   // possible values are INCOME/EXPENSE\n    \"date\": \"{{randomDate}}\",\n    \"title\": \"Sample Transaction\",\n    \"party\": \"Sample Party\",\n    \"amount\": 1234.56,\n    \"files\": [\n        {\n            \"fileUuid\": \"{{$randomUUID}}\",\n            \"filename\": \"{{$randomFileName}}\"\n        },\n        {\n            \"fileUuid\": \"{{$randomUUID}}\",\n            \"filename\": \"{{$randomFileName}}\"\n        }\n    ]\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{servername}}/api/transaction",
-									"host": [
-										"{{servername}}"
-									],
-									"path": [
-										"api",
-										"transaction"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Update",
-							"request": {
-								"method": "PUT",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n   // \"transactionType\":\"EXPENSE\",\n    //\"date\": \"24-08-2024\",\n    \"title\": \"Sample Transaction1\",\n    \"party\": \"Sample Party\",\n    \"amount\": 1234.56 /*,\n   \"files\": [\n        {\n            \"fileUuid\": \"e7e8f34a-cd16-4e6d-9c41-89f5a1a7e63b\",\n            \"filename\": \"file1.pdf\"\n        },\n        {\n            \"fileUuid\": \"c5d9e3b7-cc15-4b2c-a34b-d1f78d1c9c4d\",\n            \"filename\": \"file2.jpg\"\n        }\n    ]*/\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{servername}}/api/transaction/{{txId}}",
-									"host": [
-										"{{servername}}"
-									],
-									"path": [
-										"api",
-										"transaction",
-										"{{txId}}"
-									]
-								}
-							},
-							"response": []
-						}
-					]
-				},
-				{
 					"name": "Party List",
 					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -335,6 +157,114 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Create",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"txId\", jsonData.id);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Define the range of days (last 60 days)",
+									"const daysAgoStart = 60;",
+									"const daysAgoEnd = 1;",
+									"",
+									"// Generate a random number of days between 1 and 60",
+									"const randomDaysAgo = Math.floor(Math.random() * (daysAgoEnd - daysAgoStart + 1)) + daysAgoStart;",
+									"",
+									"// Calculate the date",
+									"const date = new Date();",
+									"date.setDate(date.getDate() - randomDaysAgo);",
+									"",
+									"// Format the date in dd-MM-yyyy format",
+									"const formattedDate = (\"0\" + date.getDate()).slice(-2) + \"-\" + (\"0\" + (date.getMonth() + 1)).slice(-2) + \"-\" + date.getFullYear();",
+									"",
+									"// Randomly choose between INCOME and EXPENSE",
+									"const transactionTypes = [\"INCOME\", \"EXPENSE\"];",
+									"const randomTypeIndex = Math.floor(Math.random() * transactionTypes.length);",
+									"const randomTransactionType = transactionTypes[randomTypeIndex];",
+									"",
+									"// Set the variable for date",
+									"pm.environment.set(\"randomDate\", formattedDate);",
+									"",
+									"// Set the variable for transaction type",
+									"pm.environment.set(\"randomTransactionType\", randomTransactionType);",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"transactionType\": \"{{randomTransactionType}}\", // possible values are INCOME/EXPENSE\n    \"date\": \"{{randomDate}}\",\n    \"title\": \"Sample Transaction\",\n    \"party\": \"{{$randomFullName}}\",\n    \"amount\": 1234.56,\n    \"files\": [\n        {\n            \"fileUuid\": \"{{fileUuid}}\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{servername}}/api/transaction",
+							"host": [
+								"{{servername}}"
+							],
+							"path": [
+								"api",
+								"transaction"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n   // \"transactionType\":\"EXPENSE\",\n    //\"date\": \"24-08-2024\",\n    \"title\": \"Sample Transaction1\",\n    \"party\": \"Sample Party\",\n    \"amount\": 112.56 ,\n   \"files\": [\n        {\n            \"fileUuid\": \"{{fileUuid}}\",\n            \"filename\": \"{{filename}}\",\n            \"uploadDate\": \"{{uploadDate}}\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{servername}}/api/transaction/{{txId}}",
+							"host": [
+								"{{servername}}"
+							],
+							"path": [
+								"api",
+								"transaction",
+								"{{txId}}"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -344,39 +274,13 @@
 				{
 					"name": "Fetch Daily",
 					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{servername}}/api/dashboard/summary",
-							"host": [
-								"{{servername}}"
-							],
-							"path": [
-								"api",
-								"dashboard",
-								"summary"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Fetch Daily - Logged In",
-					"request": {
 						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
+							"type": "noauth"
 						},
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{servername}}/api/dashboard/summary?dateOrMonth=2024-08-23",
+							"raw": "{{servername}}/api/dashboard/summary?dateOrMonth=2024-08",
 							"host": [
 								"{{servername}}"
 							],
@@ -388,7 +292,7 @@
 							"query": [
 								{
 									"key": "dateOrMonth",
-									"value": "2024-08-23"
+									"value": "2024-08"
 								}
 							]
 						}
@@ -423,58 +327,49 @@
 			]
 		},
 		{
-			"name": "Vault",
+			"name": "Vault V2",
 			"item": [
 				{
-					"name": "Get Files",
+					"name": "Get Root folder content",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"rootId\", jsonData.id);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{servername}}/api/vault",
+							"raw": "{{servername}}/api/vault/folders",
 							"host": [
 								"{{servername}}"
 							],
 							"path": [
 								"api",
-								"vault"
+								"vault",
+								"folders"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Add New Files",
+					"name": "Create Folder",
 					"event": [
 						{
-							"listen": "prerequest",
+							"listen": "test",
 							"script": {
 								"exec": [
-									"// Define the range of days (last 60 days)",
-									"const daysAgoStart = 60;",
-									"const daysAgoEnd = 1;",
-									"",
-									"// Generate a random number of days between 1 and 60",
-									"const randomDaysAgo = Math.floor(Math.random() * (daysAgoEnd - daysAgoStart + 1)) + daysAgoStart;",
-									"",
-									"// Calculate the date",
-									"const date = new Date();",
-									"date.setDate(date.getDate() - randomDaysAgo);",
-									"",
-									"// Format the date in dd-MM-yyyy format",
-									"const formattedDate = (\"0\" + date.getDate()).slice(-2) + \"-\" + (\"0\" + (date.getMonth() + 1)).slice(-2) + \"-\" + date.getFullYear();",
-									"",
-									"// Randomly choose between INCOME and EXPENSE",
-									"const transactionTypes = [\"INCOME\", \"EXPENSE\"];",
-									"const randomTypeIndex = Math.floor(Math.random() * transactionTypes.length);",
-									"const randomTransactionType = transactionTypes[randomTypeIndex];",
-									"",
-									"// Set the variable for date",
-									"pm.environment.set(\"randomDate\", formattedDate);",
-									"",
-									"// Set the variable for transaction type",
-									"pm.environment.set(\"randomTransactionType\", randomTransactionType);",
-									""
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"folderId\", jsonData.id);"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -482,63 +377,41 @@
 						}
 					],
 					"request": {
-						"method": "PATCH",
+						"method": "POST",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"fileUuid\": \"{{$randomUUID}}\",\n    \"filename\": \"{{$randomFileName}}\",\n    \"uploadDate\": \"{{randomDate}}\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
 						"url": {
-							"raw": "{{servername}}/api/vault/add",
+							"raw": "{{servername}}/api/vault/folders?name={{$randomCity}}&parentId={{rootId}}",
 							"host": [
 								"{{servername}}"
 							],
 							"path": [
 								"api",
 								"vault",
-								"add"
+								"folders"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "{{$randomCity}}"
+								},
+								{
+									"key": "parentId",
+									"value": "{{rootId}}"
+								}
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Remove Files",
+					"name": "Upload File to Folder",
 					"event": [
 						{
-							"listen": "prerequest",
+							"listen": "test",
 							"script": {
 								"exec": [
-									"// Define the range of days (last 60 days)",
-									"const daysAgoStart = 60;",
-									"const daysAgoEnd = 1;",
-									"",
-									"// Generate a random number of days between 1 and 60",
-									"const randomDaysAgo = Math.floor(Math.random() * (daysAgoEnd - daysAgoStart + 1)) + daysAgoStart;",
-									"",
-									"// Calculate the date",
-									"const date = new Date();",
-									"date.setDate(date.getDate() - randomDaysAgo);",
-									"",
-									"// Format the date in dd-MM-yyyy format",
-									"const formattedDate = (\"0\" + date.getDate()).slice(-2) + \"-\" + (\"0\" + (date.getMonth() + 1)).slice(-2) + \"-\" + date.getFullYear();",
-									"",
-									"// Randomly choose between INCOME and EXPENSE",
-									"const transactionTypes = [\"INCOME\", \"EXPENSE\"];",
-									"const randomTypeIndex = Math.floor(Math.random() * transactionTypes.length);",
-									"const randomTransactionType = transactionTypes[randomTypeIndex];",
-									"",
-									"// Set the variable for date",
-									"pm.environment.set(\"randomDate\", formattedDate);",
-									"",
-									"// Set the variable for transaction type",
-									"pm.environment.set(\"randomTransactionType\", randomTransactionType);",
-									""
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"fileId\", jsonData.id);"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -546,32 +419,172 @@
 						}
 					],
 					"request": {
-						"method": "PATCH",
+						"method": "POST",
 						"header": [],
 						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"fileUuid\": \"{{$randomUUID}}\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/Users/bsridharpatnaik/Downloads/Evergreen (2)/History.png"
+								},
+								{
+									"key": "folderId",
+									"value": "{{folderId}}",
+									"type": "text"
 								}
-							}
+							]
 						},
 						"url": {
-							"raw": "{{servername}}/api/vault/remove",
+							"raw": "http://localhost:8080/api/vault/files",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"vault",
+								"files"
+							]
+						},
+						"description": "Generated from cURL: curl -X POST \"http://localhost:8080/api/vault/files\" \\\n     -F \"file=@/path/to/your/file.txt\" \\\n     -F \"folderId=123\"\n"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Folder Content",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{servername}}/api/vault/folders?folderId={{folderId}}",
 							"host": [
 								"{{servername}}"
 							],
 							"path": [
 								"api",
 								"vault",
-								"remove"
+								"folders"
+							],
+							"query": [
+								{
+									"key": "folderId",
+									"value": "{{folderId}}"
+								}
 							]
 						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete FIle",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{servername}}/api/vault/files/{{fileId}}",
+							"host": [
+								"{{servername}}"
+							],
+							"path": [
+								"api",
+								"vault",
+								"files",
+								"{{fileId}}"
+							]
+						},
+						"description": "Generated from cURL: curl -X POST \"http://localhost:8080/api/vault/files\" \\\n     -F \"file=@/path/to/your/file.txt\" \\\n     -F \"folderId=123\"\n"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Folder",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{servername}}/api/vault/folders/{{folderId}}",
+							"host": [
+								"{{servername}}"
+							],
+							"path": [
+								"api",
+								"vault",
+								"folders",
+								"{{folderId}}"
+							]
+						},
+						"description": "Generated from cURL: curl -X POST \"http://localhost:8080/api/vault/files\" \\\n     -F \"file=@/path/to/your/file.txt\" \\\n     -F \"folderId=123\"\n"
 					},
 					"response": []
 				}
 			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					"if (pm.environment.get(\"authEnabled\") === \"true\") {",
+					"    pm.sendRequest({",
+					"        url: pm.environment.get(\"servername\") + '/api/auth/login',  // Use servername variable",
+					"        method: 'POST',",
+					"        header: {",
+					"            'Content-Type': 'application/json'",
+					"        },",
+					"        body: {",
+					"            mode: 'raw',",
+					"            raw: JSON.stringify({",
+					"                username: 'raja',",
+					"                password: 'Test@123'",
+					"            })",
+					"        }",
+					"    }, function (err, res) {",
+					"        if (err) {",
+					"            console.log(err);",
+					"        } else {",
+					"            // Extract token from response and set it as environment variable",
+					"            var jsonData = res.json();",
+					"            var token = jsonData.token;",
+					"            if (token) {",
+					"                pm.environment.set(\"token\", token);",
+					"            } else {",
+					"                console.log('Token not found in the response');",
+					"            }",
+					"        }",
+					"    });",
+					"} else {",
+					"    pm.environment.unset(\"token\");  // Unset token if auth is disabled",
+					"    ",
+					"}",
+					"",
+					"if (pm.environment.get(\"authEnabled\") === \"true\") {",
+					"    // Add the Authorization header",
+					"    pm.request.headers.add({",
+					"        key: \"Authorization\",",
+					"        value: \"Bearer {{token}}\"",
+					"    });",
+					"} else {",
+					"    // Remove the Authorization header if present",
+					"    pm.request.headers.remove(\"Authorization\");",
+					"}"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
 		}
 	]
 }
