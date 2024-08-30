@@ -427,7 +427,7 @@
 								{
 									"key": "file",
 									"type": "file",
-									"src": "/Users/bsridharpatnaik/Downloads/Evergreen (2)/History.png"
+									"src": "/Users/bsridharpatnaik/Downloads/Evergreen (2).zip"
 								},
 								{
 									"key": "folderId",
@@ -437,16 +437,49 @@
 							]
 						},
 						"url": {
-							"raw": "http://localhost:8080/api/vault/files",
-							"protocol": "http",
+							"raw": "{{servername}}/api/vault/files",
 							"host": [
-								"localhost"
+								"{{servername}}"
 							],
-							"port": "8080",
 							"path": [
 								"api",
 								"vault",
 								"files"
+							]
+						},
+						"description": "Generated from cURL: curl -X POST \"http://localhost:8080/api/vault/files\" \\\n     -F \"file=@/path/to/your/file.txt\" \\\n     -F \"folderId=123\"\n"
+					},
+					"response": []
+				},
+				{
+					"name": "Download File",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"fileId\", jsonData.id);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{servername}}/api/vault/files/download/{{fileId}}",
+							"host": [
+								"{{servername}}"
+							],
+							"path": [
+								"api",
+								"vault",
+								"files",
+								"download",
+								"{{fileId}}"
 							]
 						},
 						"description": "Generated from cURL: curl -X POST \"http://localhost:8080/api/vault/files\" \\\n     -F \"file=@/path/to/your/file.txt\" \\\n     -F \"folderId=123\"\n"
