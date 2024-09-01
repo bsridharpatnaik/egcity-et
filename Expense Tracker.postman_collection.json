@@ -223,7 +223,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"transactionType\": \"{{randomTransactionType}}\", // possible values are INCOME/EXPENSE\n    \"date\": \"{{randomDate}}\",\n    \"title\": \"Sample Transaction\",\n    \"party\": \"{{$randomFullName}}\",\n    \"amount\": {{randomNumber}},\n    \"files\": [\n        {\n            \"fileUuid\": \"{{fileUuid}}\"\n        }\n    ]\n}",
+							"raw": "{\n    \"transactionType\": \"{{randomTransactionType}}\", // possible values are INCOME/EXPENSE\n    \"date\": \"{{randomDate}}\",\n    \"title\": \"Sample Transaction\",\n    \"party\": \"{{$randomFullName}}\",\n    \"amount\": {{randomNumber}},\n    \"description\":\"{{$randomAbbreviation}}\",\n    \"files\": [\n        {\n            \"fileUuid\": \"{{fileUuid}}\"\n        }\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -253,7 +253,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n   // \"transactionType\":\"EXPENSE\",\n    //\"date\": \"24-08-2024\",\n    \"title\": \"Sample Transaction1\",\n    \"party\": \"Sample Party\",\n    \"amount\": 112.56 ,\n   \"files\": [\n        {\n            \"fileUuid\": \"{{fileUuid}}\"\n        }\n    ]\n}",
+							"raw": "{\n    // \"transactionType\":\"EXPENSE\",\n    //\"date\": \"24-08-2024\",\n    //\"title\": \"Sample Transaction1\",\n    //\"party\": \"Sample Party\",\n    //\"amount\": 112.56,\n    /*\"files\": [\n        {\n            \"fileUuid\": \"{{fileUuid}}\"\n        }\n    ]*/\n    \"description\":\"{{$randomBankAccountName}}\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
