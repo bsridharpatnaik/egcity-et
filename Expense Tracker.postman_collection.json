@@ -200,7 +200,15 @@
 									"",
 									"// Set the variable for transaction type",
 									"pm.environment.set(\"randomTransactionType\", randomTransactionType);",
-									""
+									"",
+									"// Generate a random number between 10 and 1000",
+									"var randomNumber = Math.floor(Math.random() * (1000 - 10 + 1)) + 10;",
+									"",
+									"// Set the random number as an environment variable",
+									"pm.environment.set(\"randomNumber\", randomNumber);",
+									"",
+									"// Log the random number to the console (optional)",
+									"console.log(\"Generated Random Number: \" + randomNumber);"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -215,7 +223,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"transactionType\": \"{{randomTransactionType}}\", // possible values are INCOME/EXPENSE\n    \"date\": \"{{randomDate}}\",\n    \"title\": \"Sample Transaction\",\n    \"party\": \"{{$randomFullName}}\",\n    \"amount\": 1234.56,\n    \"files\": [\n        {\n            \"fileUuid\": \"{{fileUuid}}\"\n        }\n    ]\n}",
+							"raw": "{\n    \"transactionType\": \"{{randomTransactionType}}\", // possible values are INCOME/EXPENSE\n    \"date\": \"{{randomDate}}\",\n    \"title\": \"Sample Transaction\",\n    \"party\": \"{{$randomFullName}}\",\n    \"amount\": {{randomNumber}},\n    \"description\":\"{{$randomAbbreviation}}\",\n    \"files\": [\n        {\n            \"fileUuid\": \"{{fileUuid}}\"\n        }\n    ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -245,13 +253,35 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n   // \"transactionType\":\"EXPENSE\",\n    //\"date\": \"24-08-2024\",\n    \"title\": \"Sample Transaction1\",\n    \"party\": \"Sample Party\",\n    \"amount\": 112.56 ,\n   \"files\": [\n        {\n            \"fileUuid\": \"{{fileUuid}}\",\n            \"filename\": \"{{filename}}\",\n            \"uploadDate\": \"{{uploadDate}}\"\n        }\n    ]\n}",
+							"raw": "{\n    // \"transactionType\":\"EXPENSE\",\n    //\"date\": \"24-08-2024\",\n    //\"title\": \"Sample Transaction1\",\n    //\"party\": \"Sample Party\",\n    //\"amount\": 112.56,\n    /*\"files\": [\n        {\n            \"fileUuid\": \"{{fileUuid}}\"\n        }\n    ]*/\n    \"description\":\"{{$randomBankAccountName}}\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
 								}
 							}
 						},
+						"url": {
+							"raw": "{{servername}}/api/transaction/{{txId}}",
+							"host": [
+								"{{servername}}"
+							],
+							"path": [
+								"api",
+								"transaction",
+								"{{txId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [],
 						"url": {
 							"raw": "{{servername}}/api/transaction/{{txId}}",
 							"host": [
@@ -427,7 +457,7 @@
 								{
 									"key": "file",
 									"type": "file",
-									"src": "/Users/bsridharpatnaik/Downloads/Evergreen (2)/History.png"
+									"src": "/Users/bsridharpatnaik/Downloads/Evergreen (2).zip"
 								},
 								{
 									"key": "folderId",
@@ -437,16 +467,60 @@
 							]
 						},
 						"url": {
-							"raw": "http://localhost:8080/api/vault/files",
-							"protocol": "http",
+							"raw": "{{servername}}/api/vault/files",
 							"host": [
-								"localhost"
+								"{{servername}}"
 							],
-							"port": "8080",
 							"path": [
 								"api",
 								"vault",
 								"files"
+							]
+						},
+						"description": "Generated from cURL: curl -X POST \"http://localhost:8080/api/vault/files\" \\\n     -F \"file=@/path/to/your/file.txt\" \\\n     -F \"folderId=123\"\n"
+					},
+					"response": []
+				},
+				{
+					"name": "Download File",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{servername}}/api/vault/files/download/{{fileId}}",
+							"host": [
+								"{{servername}}"
+							],
+							"path": [
+								"api",
+								"vault",
+								"files",
+								"download",
+								"{{fileId}}"
 							]
 						},
 						"description": "Generated from cURL: curl -X POST \"http://localhost:8080/api/vault/files\" \\\n     -F \"file=@/path/to/your/file.txt\" \\\n     -F \"folderId=123\"\n"
@@ -517,6 +591,119 @@
 							]
 						},
 						"description": "Generated from cURL: curl -X POST \"http://localhost:8080/api/vault/files\" \\\n     -F \"file=@/path/to/your/file.txt\" \\\n     -F \"folderId=123\"\n"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "History",
+			"item": [
+				{
+					"name": "Get History",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{servername}}/api/history",
+							"host": [
+								"{{servername}}"
+							],
+							"path": [
+								"api",
+								"history"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Bulk Add Transactions",
+			"item": [
+				{
+					"name": "Create Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"txId\", jsonData.id);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Define the range of days (last 60 days)",
+									"const daysAgoStart = 60;",
+									"const daysAgoEnd = 1;",
+									"",
+									"// Generate a random number of days between 1 and 60",
+									"const randomDaysAgo = Math.floor(Math.random() * (daysAgoEnd - daysAgoStart + 1)) + daysAgoStart;",
+									"",
+									"// Calculate the date",
+									"const date = new Date();",
+									"date.setDate(date.getDate() - randomDaysAgo);",
+									"",
+									"// Format the date in dd-MM-yyyy format",
+									"const formattedDate = (\"0\" + date.getDate()).slice(-2) + \"-\" + (\"0\" + (date.getMonth() + 1)).slice(-2) + \"-\" + date.getFullYear();",
+									"",
+									"// Randomly choose between INCOME and EXPENSE",
+									"const transactionTypes = [\"INCOME\", \"EXPENSE\"];",
+									"const randomTypeIndex = Math.floor(Math.random() * transactionTypes.length);",
+									"const randomTransactionType = transactionTypes[randomTypeIndex];",
+									"",
+									"// Set the variable for date",
+									"pm.environment.set(\"randomDate\", formattedDate);",
+									"",
+									"// Set the variable for transaction type",
+									"pm.environment.set(\"randomTransactionType\", randomTransactionType);",
+									"",
+									"var randomNumber = Math.floor(Math.random() * (1000 - 10 + 1)) + 10;",
+									"",
+									"// Set the random number as an environment variable",
+									"pm.environment.set(\"randomNumber\", randomNumber);",
+									"",
+									"// Log the random number to the console (optional)",
+									"console.log(\"Generated Random Number: \" + randomNumber);",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"transactionType\": \"{{randomTransactionType}}\", // possible values are INCOME/EXPENSE\n    \"date\": \"{{randomDate}}\",\n    \"title\": \"{{$randomBsNoun}}\",\n    \"party\": \"{{$randomFullName}}\",\n    \"amount\": {{randomNumber}},\n    \"files\": [\n        {\n            \"fileUuid\": \"{{fileUuid}}\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{servername}}/api/transaction",
+							"host": [
+								"{{servername}}"
+							],
+							"path": [
+								"api",
+								"transaction"
+							]
+						}
 					},
 					"response": []
 				}
