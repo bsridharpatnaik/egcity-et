@@ -6,12 +6,7 @@
   font-family: "Poppins", sans-serif;
 }
 
-.splash-screen {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #489C2C; 
-}
+
 
 .logo {
   width: 150px; 

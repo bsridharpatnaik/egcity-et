@@ -1,9 +1,14 @@
 import React, { useState } from 'react';
-import logo from '../../assets/evergreen.png';
+import logo from '../../assets/png/evergreen.png';
 import './login.css';
-import lock from "../../assets/Frame.svg"; 
-import hidden from "../../assets/Group.svg";
-import profile from "../../assets/Profile.svg";
+
+import { ReactComponent as Lock } from "../../assets/svgs/Frame.svg";
+
+import { ReactComponent as Hidden } from "../../assets/svgs/Group.svg";
+
+import { ReactComponent as Profile } from "../../assets/svgs/Profile.svg";
+
+
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -61,7 +66,7 @@ function Login() {
       <div className="input-group">
         <label>Username</label>
         <div className="input-wrapper">
-          <img src={profile} alt="Profile Icon" className="input-icon" />
+      <Profile />
           <input
             type="email"
             placeholder="Enter Username"
@@ -75,7 +80,7 @@ function Login() {
       <div className="input-group">
         <label>Password</label>
         <div className="input-wrapper">
-          <img src={lock} alt="Lock Icon" className="input-icon" />
+         <Lock />
           <input
             type={passwordShown ? "text" : "password"}
             placeholder="Enter your password"
@@ -83,13 +88,14 @@ function Login() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <img
+          <Hidden />
+          {/* <img
             src={hidden}
             alt="Toggle Visibility Icon"
             className="toggle-icon"
             onClick={togglePasswordVisibility}
             style={{ cursor: 'pointer' }}
-          />
+          /> */}
         </div>
       </div>
 

@@ -5,20 +5,22 @@ import {
   Routes,
   useNavigate,
 } from "react-router-dom";
-import logo from "./assets/evergreen.png"
+import logo from "./assets/png/evergreen.png";
 import "./App.css";
 import BalanceCard from "./pages/BalanceCard/BalanceCard";
 import Login from "./pages/Login/Login";
+import History from "./pages/History";
+import Documentation from "./pages/Documentation-vault";
 
 function SplashScreen() {
   const navigate = useNavigate();
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      navigate("/dashboard"); 
+      navigate("/dashboard");
     }, 3000);
 
-    return () => clearTimeout(timer); 
+    return () => clearTimeout(timer);
   }, [navigate]);
 
   return (
@@ -28,21 +30,14 @@ function SplashScreen() {
   );
 }
 
-function Home() {
-  return (
-    <div className="home">
-      <h1>Welcome to Evergreen City</h1>
-    </div>
-  );
-}
-
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<SplashScreen />} />
-        <Route path="/home" element={<Home />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/history" element={<History />} />
+        <Route path="/documentation-vault" element={<Documentation />} />
         <Route path="/dashboard" element={<BalanceCard />} />
       </Routes>
     </Router>

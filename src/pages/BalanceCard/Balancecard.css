@@ -231,3 +231,6 @@ input:not([type="image" i], [type="range" i], [type="checkbox" i], [type="radio"
   font-size:12px;
   margin-bottom:10px !important
 }
+.dots-container{
+  position: relative;
+}
