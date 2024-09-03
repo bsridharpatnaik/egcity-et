@@ -4,6 +4,7 @@ import { ReactComponent as Dots } from "../../assets/svgs/blackdots.svg";
 import Menu from "../Menu";
 import { format } from "date-fns";
 import { useDeleteTransactionMutation } from "../../service/api";
+import { toast } from "react-toastify";
 const Transaction = ({
   activeTab,
   borderBottom,
@@ -42,8 +43,9 @@ const Transaction = ({
 const handleDelete=async()=>{
  try{
    const res= await deleteTransaction(item.id)
-   
+   toast.success("Deleted Successfully")
  }catch(err){
+  toast.error("Something went wrong")
   console.log("Err",err);
  }
 }

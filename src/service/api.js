@@ -22,14 +22,14 @@ export const api = createApi({
         method: "POST",
         body: data,
       }),
-      providesTags: ["Dashboard"],
+      invalidatesTags:["Dashboard"]
     }),
     getExistingParty: builder.query({
       query: () => ({
         url: `/transaction/party`,
         method: "GET",
       }),
-      invalidatesTags: ["Dashboard"],
+      providesTags: ["Dashboard"],
     }),
     getDashboardTransactionData: builder.query({
       query: (date) => ({
@@ -49,7 +49,15 @@ export const api = createApi({
         url: `/transaction/${id}`,
         method: "DELETE",
       }),
-      providesTags: ["Dashboard"],
+      invalidatesTags: ["Dashboard"],
+    }),
+    updateTransaction: builder.mutation({
+      query: ({id,data}) => ({
+        url: `/transaction/${id}`,
+        method: "PUT",
+        body:data
+      }),
+      invalidatesTags: ["Dashboard"],
     }),
   }),
 });
@@ -59,5 +67,6 @@ export const {
   useGetExistingPartyQuery,
   useUploadFileMutation,
   useGetDashboardTransactionDataQuery,
-  useDeleteTransactionMutation
+  useDeleteTransactionMutation,
+  useUpdateTransactionMutation
 } = api;

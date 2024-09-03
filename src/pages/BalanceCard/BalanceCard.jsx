@@ -126,7 +126,6 @@ function BalanceCard() {
   }, []);
   useEffect(() => {
     if (data) {
-      console.log(data.username,"username")
       setDashboardData({
         transactionsByType: {
           EXPENSE: data?.transactionsByType?.EXPENSE,
@@ -136,7 +135,7 @@ function BalanceCard() {
         totalIncome: data.totalIncome,
         totalExpense: data.totalExpense,
         balance: data.balance,
-        usernam: data.username,
+        username: data.username,
       });
     }
   }, [data]);

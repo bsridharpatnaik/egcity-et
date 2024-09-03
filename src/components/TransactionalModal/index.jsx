@@ -5,33 +5,41 @@ import "./index.css";
 import {
   useCreateTransactionMutation,
   useGetExistingPartyQuery,
+  useUpdateTransactionMutation,
   useUploadFileMutation,
 } from "../../service/api";
+import { toast } from "react-toastify";
 
 const AddTransactionModal = ({dataToShow, isOpen, onClose, isUpdate }) => {
   const { data, isLoading: existingPartyloading } = useGetExistingPartyQuery();
   const [createTransaction, { isLoading: creatingTransactionLoading }] =
     useCreateTransactionMutation();
   const [uploadFile, { isLoading: fileLoading }] = useUploadFileMutation();
+  const [update, { isLoading: updateLoading }] = useUpdateTransactionMutation();
+
   const [files, setFiles] = useState([]);
   const [filesDetail, setFilesDetail] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [options, setOptions] = useState([]);
   const [value, setValue] = useState();
   const [submissionData, setSubmissionData] = useState({});
-useEffect(()=>{
-  const defaultValue = {
-    title:dataToShow.title ??  "",
-    amount:dataToShow.amount ??  0,
-    description:dataToShow.description ??  "",
-    selectedParty:dataToShow.selectedParty ??  null,
-    transactionType:dataToShow.transactionType ??  "Income",
-  };
-  setSubmissionData(defaultValue)
- 
-  setFiles(dataToShow?.fileInfos)
-},[dataToShow.id])
-   console.log("Data to show",dataToShow);
+  console.log("DTA S",dataToShow);
+  useEffect(() => {
+    const defaultValue = {
+      title: dataToShow.title ?? "",
+      amount: dataToShow.amount ?? 0,
+      description: dataToShow.description ?? "",
+      selectedParty: dataToShow.party,
+      transactionType: dataToShow.transactionType ?? "INCOME",
+    };
+    setSubmissionData(defaultValue);
+    // Set the initial value for the select if `dataToShow.selectedParty` exists
+    if (dataToShow.party) {
+      setValue(createOption(dataToShow.party));
+    }
+    setFilesDetail(dataToShow?.fileInfos || []);
+    setFiles(dataToShow?.fileInfos || []);
+  }, [dataToShow]);
   const customStyles = {
     control: (provided) => ({
       ...provided,
@@ -61,13 +69,13 @@ useEffect(()=>{
     setIsLoading(true);
     setTimeout(() => {
       const newOption = createOption(inputValue);
-      setOptions((prev) => [...prev, { label: inputValue, value: inputValue }]);
+      setOptions((prev) => [...prev, newOption]);
+      setValue(newOption);
       setIsLoading(false);
       setSubmissionData((prevState) => ({
         ...prevState,
-        selectedParty: inputValue,
+        selectedParty: inputValue, 
       }));
-      setValue(newOption);
     }, 1000);
   };
 
@@ -114,12 +122,12 @@ useEffect(()=>{
   }
 
   const handleSelectChange = (selectedOption) => {
+    setValue(selectedOption); 
     setSubmissionData((prevState) => ({
       ...prevState,
-      selectedParty: selectedOption.value,
+      selectedParty: selectedOption ? selectedOption.value : null,
     }));
   };
-
   const submitRequest = async (e) => {
     e.stopPropagation();
     const todayDate =  getFormattedDate();
@@ -133,9 +141,15 @@ useEffect(()=>{
       files: filesDetail,
     };
    try{
-    const response = await createTransaction(data);
+    if(isUpdate){
+     const resposne=await update({id:dataToShow.id , data});
+     toast.success("Updated Successfully")
+    }else{
+      const response = await createTransaction(data);
+     toast.success("Added Successfully")
+
+    }
    }catch(error){
-console.log("Error",error);
    }finally{
     setSubmissionData({
       title: "",
@@ -144,16 +158,16 @@ console.log("Error",error);
       selectedParty: null,
       transactionType: "Income",
     });
+    setValue({})
     setFiles([]);
     setFilesDetail([]);
    }
-  
   };
 
   useEffect(() => {
     if (data && data.length > 0) {
       const newArr = data.map((item) => ({ label: item, value: item }));
-      setOptions(newArr);
+      setOptions(newArr); 
     }
   }, [data]);
 
@@ -172,8 +186,8 @@ console.log("Error",error);
             <input
               type="radio"
               name="transactionType"
-              value="Income"
-              checked={submissionData.transactionType === "Income"}
+              value="INCOME"
+              checked={submissionData.transactionType === "INCOME" }
               onChange={(e) => handleInputChange(e, "transactionType")}
               defaultChecked
             />
@@ -183,8 +197,8 @@ console.log("Error",error);
             <input
               type="radio"
               name="transactionType"
-              value="Expense"
-              checked={submissionData.transactionType === "Expense"}
+              value="EXPENSE"
+              checked={submissionData.transactionType === "EXPENSE"}
               onChange={(e) => handleInputChange(e, "transactionType")}
             />
             Expenses
@@ -241,11 +255,11 @@ console.log("Error",error);
             isClearable
             isDisabled={isLoading}
             isLoading={isLoading}
-            onChange={handleSelectChange}
-            onCreateOption={handleCreate}
+            onChange={handleSelectChange} 
+            onCreateOption={handleCreate} 
             options={options}
             styles={customStyles}
-            value={value}
+            value={value} 
           />
         </div>
 
@@ -317,7 +331,7 @@ console.log("Error",error);
         </div>
 
         <button onClick={submitRequest} className="modal-add-button">
-          Add
+         {isUpdate ? "Update" : "Add"}
         </button>
       </div>
     </div>
