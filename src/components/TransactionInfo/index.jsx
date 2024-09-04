@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { ReactComponent as IncomeIcon } from "../../assets/svgs/Download.svg";
 import { ReactComponent as ExpenseIcon } from "../../assets/svgs/Upload.svg";
 import Transaction from "../../components/Transaction";
@@ -17,7 +17,6 @@ const TransactionInfo = ({
   const [isUpdate, setIsUpdate] = useState(false);
   const [dataToShow, setdataToShow] = useState({});
 
-
   const handleTabClick = (tab) => {
     setActiveTab(tab);
   };
@@ -25,11 +24,10 @@ const TransactionInfo = ({
   const handleAddButtonClick = (item) => {
     setdataToShow(item)
     setIsModalOpen(true);
+    setIsUpdate(false)
   };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
+
 
   return (
     <div className="transaction-info">
@@ -86,7 +84,7 @@ const TransactionInfo = ({
           expense.map((item, index) => {
             return (
               <Transaction
-              activeTab={activeTab}
+                activeTab={activeTab}
                 key={index}
                 showIcon={true}
                 showDetails={true}
@@ -102,7 +100,7 @@ const TransactionInfo = ({
           income.map((item, index) => {
             return (
               <Transaction
-               activeTab={activeTab}
+                activeTab={activeTab}
                 key={index}
                 showIcon={true}
                 showDetails={true}
@@ -116,11 +114,12 @@ const TransactionInfo = ({
           })}
       </div>
       <AddTransactionModal
-      dataToShow={dataToShow}
+       dataToShow={dataToShow}
         isOpen={isModalOpen}
         isUpdate={isUpdate}
-        onClose={handleCloseModal}
-      />
+       setIsModalOpen={setIsModalOpen}
+
+      />  
     </div>
   );
 };

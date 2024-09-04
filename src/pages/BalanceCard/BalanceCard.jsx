@@ -10,6 +10,8 @@ import Menu from "../../components/Menu";
 import TransactionInfo from "../../components/TransactionInfo";
 import { addDays, subDays, addMonths, subMonths } from "date-fns";
 import { useGetDashboardTransactionDataQuery } from "../../service/api";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 
 function BalanceCard() {
   const [toggle, setToggle] = useState("D");
@@ -24,22 +26,19 @@ function BalanceCard() {
     balance: 0,
     username: "anonymous",
   });
+  const transactionRef = useRef(null); 
+
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showMenu, setShowMenu] = useState(false);
   const { data, refetch } = useGetDashboardTransactionDataQuery(formatDate(selectedDate));
-
-
   const handleToggle = (value) => {
     setToggle(value);
   };
-
   function formatDate(dateString) {
     const date = new Date(dateString);
-  
     const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = date.getFullYear();
-
     if(toggle === "M") return `${year}-${month}`;
     return `${year}-${month}-${day}`;
   }
@@ -68,13 +67,15 @@ function BalanceCard() {
   };
 
   const user = JSON.parse(localStorage.getItem("user"));
+
   const menuRef = useRef(null);
   const items = [
     {
       label: "Export to PDF",
-      onClick: () => {
+      onClick: () =>{
         setShowMenu(false);
-      },
+        exportToPDF()
+      }
     },
     {
       label: "Documentation Vault",
@@ -88,20 +89,16 @@ function BalanceCard() {
         setShowMenu(false);
       },
     },
+    ...(user?.username !== "anonymous" ? [{
+      label: "Logout",
+      onClick: () => {
+        localStorage.clear();
+        window.location.reload();
+      }
+    }] : [])
   ];
 
-  const handleClickOutside = (event) => {
-    if (menuRef.current && !menuRef.current.contains(event.target)) {
-      setShowMenu(false);
-    }
-  };
 
-  useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
   useEffect(() => {
     if (data) {
       setDashboardData({
@@ -120,6 +117,23 @@ function BalanceCard() {
       }
     }
   }, [data]);
+  const exportToPDF = () => {
+    console.log("Clicked");
+    const input = transactionRef.current;
+    html2canvas(input, { scale: 2 }) // Increase the scale for better quality
+      .then((canvas) => {
+        const imgData = canvas.toDataURL("image/png");
+        const pdf = new jsPDF("p", "mm", "a4");
+        const imgProps = pdf.getImageProperties(imgData);
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+        pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+        pdf.save("transactions.pdf");
+      })
+      .catch((err) => {
+        console.error("Failed to generate PDF", err);
+      });
+  };
   
   return (
     <div>
@@ -145,7 +159,7 @@ function BalanceCard() {
                   onClick={() => setShowMenu(!showMenu)}
                   ref={menuRef}
                 />
-                {showMenu && <Menu items={items} />}
+                {showMenu && <Menu items={items}  />}
               </div>
             </div>
           </div>
@@ -195,6 +209,7 @@ function BalanceCard() {
           </button>
         </div>
       </div>
+      <div ref={transactionRef}> 
       <TransactionInfo
         totalIncome={dashboardData.totalIncome}
         totalExpense={dashboardData.totalExpense}
@@ -202,6 +217,7 @@ function BalanceCard() {
         expense={dashboardData.transactionsByType.EXPENSE}
         income={dashboardData.transactionsByType.INCOME}
       />
+      </div>
     </div>
   );
 }

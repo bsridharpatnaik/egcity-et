@@ -10,7 +10,7 @@ import {
 } from "../../service/api";
 import { toast } from "react-toastify";
 
-const AddTransactionModal = ({dataToShow, isOpen, onClose, isUpdate }) => {
+const AddTransactionModal = ({dataToShow, isOpen, setIsModalOpen, isUpdate }) => {
   const { data, isLoading: existingPartyloading } = useGetExistingPartyQuery();
   const [createTransaction, { isLoading: creatingTransactionLoading }] =
     useCreateTransactionMutation();
@@ -152,7 +152,7 @@ const AddTransactionModal = ({dataToShow, isOpen, onClose, isUpdate }) => {
       setValue({})
       setFiles([]);
       setFilesDetail([]);
-      onClose()
+      setIsModalOpen(false)
       toast.success("Updated Successfully")
     }
     }else{
@@ -169,7 +169,7 @@ const AddTransactionModal = ({dataToShow, isOpen, onClose, isUpdate }) => {
         setValue({})
         setFiles([]);
         setFilesDetail([]);
-        onClose()
+        setIsModalOpen(false)
 
         toast.success("Added Successfully")
       }
@@ -187,24 +187,24 @@ const AddTransactionModal = ({dataToShow, isOpen, onClose, isUpdate }) => {
     setFilesDetail([]);
    }
   };
-useEffect(()=>{
-  setSubmissionData({
-    title: "",
-    amount: 0,
-    selectedParty: null,
-    transactionType: "Income",
-  });
-  setValue({})
-  setFiles([]);
-  setFilesDetail([]);
-},[onClose])
   useEffect(() => {
     if (data && data.length > 0) {
       const newArr = data.map((item) => ({ label: item, value: item }));
       setOptions(newArr); 
     }
   }, [data]);
-
+  const handleCloseModal=()=>{
+    setIsModalOpen(false)
+    setSubmissionData({
+      title: "",
+      amount: 0,
+      selectedParty: null,
+      transactionType: "Income",
+    });
+    setValue({})
+    setFiles([]);
+    setFilesDetail([]);
+  }
   return (
     <div className={`modal-overlay ${isOpen ? "show" : ""}`}>
       <div
@@ -213,7 +213,7 @@ useEffect(()=>{
       >
         <div className="top-heading">
           <h2>{isUpdate ? `Update` : `Add`}</h2>
-          <Cross onClick={onClose} />
+          <Cross onClick={handleCloseModal} />
         </div>
         <div className="modal-radio-group">
           <label>
