@@ -100,7 +100,7 @@
 /* DatePicker Custom Styles */
 .react-datepicker-wrapper {
   width: auto;
-  flex-grow: 1;
+  margin-left: 60px;
 }
 
 .react-datepicker {

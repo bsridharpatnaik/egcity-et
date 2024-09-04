@@ -64,17 +64,13 @@ const TransactionInfo = ({
         <h4>Transaction History</h4>
         <div className="tab-row" id="tab-row">
           <div
-            className={`tab ${
-              activeTab === "Expense" ? "active-tab tab" : "tab"
-            }`}
+            className='expense-tab'
             onClick={() => handleTabClick("Expense")}
           >
             Expenses
           </div>
           <div
-            className={`tab ${
-              activeTab === "Income" ? "active-tab tab" : "tab"
-            }`}
+            className='income-tab'
             onClick={() => handleTabClick("Income")}
           >
             Income
@@ -106,7 +102,7 @@ const TransactionInfo = ({
           income.map((item, index) => {
             return (
               <Transaction
-              activeTab={activeTab}
+               activeTab={activeTab}
                 key={index}
                 showIcon={true}
                 showDetails={true}

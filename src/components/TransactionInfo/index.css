@@ -17,13 +17,20 @@
     padding: 3px;
     display: flex;
 }
-.tab{
+.income-tab{
     padding: 8px 12px;
     margin: 5px;
-    color: white;
-    background-color: #6b9eea;
+    color: black;
+    background-color: #E1FBD8;
     border-radius: 5px;
 }
-.active-tab{
-    background-color: #1B2034;
+.expense-tab{
+    padding: 8px 12px;
+    margin: 5px;
+    color: red;
+    background-color: #FFD3D1;
+    border-radius: 5px;
 }
+/* .active-tab{
+    background-color: #1B2034;
+} */

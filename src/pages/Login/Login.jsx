@@ -7,6 +7,7 @@ import { ReactComponent as Lock } from "../../assets/svgs/Frame.svg";
 import { ReactComponent as Hidden } from "../../assets/svgs/Group.svg";
 
 import { ReactComponent as Profile } from "../../assets/svgs/Profile.svg";
+import { toast } from 'react-toastify';
 
 
 
@@ -45,7 +46,7 @@ function Login() {
         localStorage.setItem("user",JSON.stringify(data))
         // Handle successful login, e.g., redirect to dashboard
       } else {
-        console.error('Login failed', response.statusText);
+       toast.error("Bad Credentials")
         // Handle login failure, e.g., show error message
       }
     } catch (error) {

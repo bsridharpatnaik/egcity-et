@@ -23,12 +23,10 @@ const AddTransactionModal = ({dataToShow, isOpen, onClose, isUpdate }) => {
   const [options, setOptions] = useState([]);
   const [value, setValue] = useState();
   const [submissionData, setSubmissionData] = useState({});
-  console.log("DTA S",dataToShow);
   useEffect(() => {
     const defaultValue = {
       title: dataToShow.title ?? "",
       amount: dataToShow.amount ?? 0,
-      description: dataToShow.description ?? "",
       selectedParty: dataToShow.party,
       transactionType: dataToShow.transactionType ?? "INCOME",
     };
@@ -135,26 +133,52 @@ const AddTransactionModal = ({dataToShow, isOpen, onClose, isUpdate }) => {
       transactionType: submissionData.transactionType.toUpperCase(),
       date: todayDate,
       title: submissionData.title,
-      description: submissionData.description,
       party: submissionData.selectedParty,
       amount: submissionData.amount,
       files: filesDetail,
     };
    try{
     if(isUpdate){
-     const resposne=await update({id:dataToShow.id , data});
-     toast.success("Updated Successfully")
+     const response=await update({id:dataToShow.id , data});
+     if(response?.error){
+      toast.error(response?.error?.data?.message)
+    }else{
+      setSubmissionData({
+        title: "",
+        amount: 0,
+        selectedParty: null,
+        transactionType: "Income",
+      });
+      setValue({})
+      setFiles([]);
+      setFilesDetail([]);
+      onClose()
+      toast.success("Updated Successfully")
+    }
     }else{
       const response = await createTransaction(data);
-     toast.success("Added Successfully")
+      if(response?.error){
+        toast.error(response?.error?.data?.message)
+      }else{
+        setSubmissionData({
+          title: "",
+          amount: 0,
+          selectedParty: null,
+          transactionType: "Income",
+        });
+        setValue({})
+        setFiles([]);
+        setFilesDetail([]);
+        onClose()
+
+        toast.success("Added Successfully")
+      }
 
     }
    }catch(error){
-   }finally{
     setSubmissionData({
       title: "",
       amount: 0,
-      description: "",
       selectedParty: null,
       transactionType: "Income",
     });
@@ -163,7 +187,17 @@ const AddTransactionModal = ({dataToShow, isOpen, onClose, isUpdate }) => {
     setFilesDetail([]);
    }
   };
-
+useEffect(()=>{
+  setSubmissionData({
+    title: "",
+    amount: 0,
+    selectedParty: null,
+    transactionType: "Income",
+  });
+  setValue({})
+  setFiles([]);
+  setFilesDetail([]);
+},[onClose])
   useEffect(() => {
     if (data && data.length > 0) {
       const newArr = data.map((item) => ({ label: item, value: item }));
@@ -231,18 +265,7 @@ const AddTransactionModal = ({dataToShow, isOpen, onClose, isUpdate }) => {
             />
           </div>
         </div>
-        <div className="input-group_">
-          <label htmlFor="inputField">Description</label>
-          <div className="input-wrapper_">
-            <textarea
-              id="inputField"
-              value={submissionData.description}
-
-              onChange={(e) => handleInputChange(e, "description")}
-              placeholder="Query Here"
-            />
-          </div>
-        </div>
+       
 
         <div className="input-group_">
           <label>Select Party</label>

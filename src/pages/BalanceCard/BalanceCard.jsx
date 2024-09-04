@@ -9,7 +9,6 @@ import { ReactComponent as Icon } from "../../assets/svgs/Icon.svg";
 import Menu from "../../components/Menu";
 import TransactionInfo from "../../components/TransactionInfo";
 import { addDays, subDays, addMonths, subMonths } from "date-fns";
-import AddButton from "../../components/AddButton";
 import { useGetDashboardTransactionDataQuery } from "../../service/api";
 
 function BalanceCard() {
@@ -23,11 +22,10 @@ function BalanceCard() {
     totalIncome: 0,
     totalExpense: 0,
     balance: 0,
-    usernam: "anonymous",
+    username: "anonymous",
   });
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showMenu, setShowMenu] = useState(false);
-  console.log(selectedDate,"selectedDate")
   const { data, refetch } = useGetDashboardTransactionDataQuery(formatDate(selectedDate));
 
 
@@ -71,27 +69,7 @@ function BalanceCard() {
 
   const user = JSON.parse(localStorage.getItem("user"));
   const menuRef = useRef(null);
-
   const items = [
-    {
-      label: "Charts",
-      onClick: () => {
-        console.log("Change Category clicked");
-        setShowMenu(false);
-      },
-    },
-    {
-      label: "Need help?",
-      onClick: () => {
-        setShowMenu(false);
-      },
-    },
-    {
-      label: "Settings",
-      onClick: () => {
-        setShowMenu(false);
-      },
-    },
     {
       label: "Export to PDF",
       onClick: () => {
@@ -137,9 +115,12 @@ function BalanceCard() {
         balance: data.balance,
         username: data.username,
       });
+      if(data?.username==="anonymous"){
+        localStorage.clear()
+      }
     }
   }, [data]);
-
+  
   return (
     <div>
       <div className="balance-card">
@@ -172,7 +153,7 @@ function BalanceCard() {
         <div className="balance-info">
           <div>
             <p>Total Balance</p>
-            <h2>{dashboardData.balance}</h2>
+            <h2>₹{dashboardData.balance}</h2>
           </div>
           <div className="toggle-group">
             <div

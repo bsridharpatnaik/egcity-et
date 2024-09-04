@@ -73,7 +73,7 @@ const handleDelete=async()=>{
       className="transaction-item"
       style={{ borderBottom: borderBottom, backgroundColor: background }}
     >
-      <div className="transaction-icon">AT</div>
+      <div className="transaction-icon">{activeTab.toUpperCase().substring(0,1)}</div>
       <div className="transaction-details">
         <strong>{item?.title}</strong>
         {historyLog && (

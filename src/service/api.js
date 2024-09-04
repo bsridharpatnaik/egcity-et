@@ -22,20 +22,20 @@ export const api = createApi({
         method: "POST",
         body: data,
       }),
-      invalidatesTags:["Dashboard"]
+      invalidatesTags: ["Dashboard"],
     }),
     getExistingParty: builder.query({
       query: () => ({
         url: `/transaction/party`,
         method: "GET",
       }),
-      providesTags: ["Dashboard"],
     }),
     getDashboardTransactionData: builder.query({
       query: (date) => ({
         url: `/dashboard/summary?dateOrMonth=${date}`,
         method: "GET",
       }),
+      providesTags: ["Dashboard"],
     }),
     uploadFile: builder.mutation({
       query: (formData) => ({
@@ -52,10 +52,10 @@ export const api = createApi({
       invalidatesTags: ["Dashboard"],
     }),
     updateTransaction: builder.mutation({
-      query: ({id,data}) => ({
+      query: ({ id, data }) => ({
         url: `/transaction/${id}`,
         method: "PUT",
-        body:data
+        body: data,
       }),
       invalidatesTags: ["Dashboard"],
     }),
