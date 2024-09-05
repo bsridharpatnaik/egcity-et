@@ -59,6 +59,12 @@ export const api = createApi({
       }),
       invalidatesTags: ["Dashboard"],
     }),
+     getHistory: builder.query({
+      query: () => ({
+        url: `/history`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -68,5 +74,6 @@ export const {
   useUploadFileMutation,
   useGetDashboardTransactionDataQuery,
   useDeleteTransactionMutation,
-  useUpdateTransactionMutation
+  useUpdateTransactionMutation,
+  useGetHistoryQuery
 } = api;

@@ -1,6 +1,6 @@
 
   .transaction-icon {
-    width: 50px;
+    min-width: 52px;
     height: 50px;
     border-radius: 50%;
     background-color: #E1E4E8;

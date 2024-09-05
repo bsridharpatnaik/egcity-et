@@ -34,6 +34,7 @@ function BalanceCard() {
   const handleToggle = (value) => {
     setToggle(value);
   };
+  console.log("data",data);
   function formatDate(dateString) {
     const date = new Date(dateString);
     const day = String(date.getDate()).padStart(2, '0');
@@ -142,13 +143,13 @@ function BalanceCard() {
           <div style={{ display: "flex", gap: "5px" }}>
             <img src={logo} alt="Logo" className="logo" />
             <p style={{ fontSize: "14px", color: "#fff" }}>
-              Hi, {user?.username}
+              Hi, {data?.username!=="anonymous" ? data?.username : ""}
             </p>
           </div>
           <div className="user-info">
             <div className="icons">
               <Icon className="search-icon" />
-              {!user?.username && (
+              {data?.username==="anonymous" && (
                 <a href="/login">
                   <ThreeIcon className="menu-icon" />
                 </a>

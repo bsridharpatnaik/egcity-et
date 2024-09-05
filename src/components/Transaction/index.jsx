@@ -21,7 +21,6 @@ const Transaction = ({
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef(null);
   const currentDate = new Date();
-  const formattedDate = format(currentDate, "dd/MM/yyyy");
   const items = [
     {
       label: "Edit",
@@ -67,24 +66,24 @@ const handleDelete=async()=>{
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-
+console.log("Item",item);
   return (
     <div
       className="transaction-item"
       style={{ borderBottom: borderBottom, backgroundColor: background }}
     >
-      <div className="transaction-icon">{activeTab.toUpperCase().substring(0,1)}</div>
+      <div className="transaction-icon">{activeTab?.toUpperCase()?.substring(0,1)}</div>
       <div className="transaction-details">
         <strong>{item?.title}</strong>
         {historyLog && (
-          <span style={{ color: "#666875" }}> &nbsp;Added a new expense</span>
+          <span style={{ color: "#666875" }}> &nbsp;{item?.message}</span>
         )}
         {date ? (
           <>
             <p
               style={{ marginTop: "3px", color: "#A6AEC1", fontWeight: "200" }}
             >
-              {formattedDate}
+              {item?.creationDate}
             </p>{" "}
           </>
         ) : (
