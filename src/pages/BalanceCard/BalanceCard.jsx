@@ -119,16 +119,39 @@ function BalanceCard() {
     }
   }, [data]);
   const exportToPDF = () => {
-    console.log("Clicked");
     const input = transactionRef.current;
-    html2canvas(input, { scale: 2 }) // Increase the scale for better quality
+  
+    if (!input) {
+      console.error("Invalid element: transactionRef is not attached to any DOM element");
+      return;
+    }
+  
+    html2canvas(input, { scale: 2 })
       .then((canvas) => {
         const imgData = canvas.toDataURL("image/png");
         const pdf = new jsPDF("p", "mm", "a4");
-        const imgProps = pdf.getImageProperties(imgData);
+  
         const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-        pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+        const pdfHeight = pdf.internal.pageSize.getHeight();
+  
+        const canvasWidth = canvas.width;
+        const canvasHeight = canvas.height;
+        const imgHeight = (canvasHeight * pdfWidth) / canvasWidth;
+  
+        let heightLeft = imgHeight;
+        let position = 0;
+  
+        // Add the first page
+        pdf.addImage(imgData, "PNG", 0, position, pdfWidth, imgHeight);
+        heightLeft -= pdfHeight;
+  
+        while (heightLeft > 0) {
+          position = heightLeft - imgHeight;
+          pdf.addPage();
+          pdf.addImage(imgData, "PNG", 0, position, pdfWidth, imgHeight);
+          heightLeft -= pdfHeight;
+        }
+  
         pdf.save("transactions.pdf");
       })
       .catch((err) => {
@@ -210,15 +233,14 @@ function BalanceCard() {
           </button>
         </div>
       </div>
-      <div ref={transactionRef}> 
       <TransactionInfo
+      transactionRef={transactionRef}
         totalIncome={dashboardData.totalIncome}
         totalExpense={dashboardData.totalExpense}
         carryForward={dashboardData.carryForward}
         expense={dashboardData.transactionsByType.EXPENSE}
         income={dashboardData.transactionsByType.INCOME}
       />
-      </div>
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, {  useState } from "react";
 import { ReactComponent as IncomeIcon } from "../../assets/svgs/Download.svg";
 import { ReactComponent as ExpenseIcon } from "../../assets/svgs/Upload.svg";
 import Transaction from "../../components/Transaction";
@@ -6,6 +6,7 @@ import AddButton from "../AddButton";
 import "./index.css";
 import AddTransactionModal from "../TransactionalModal";
 const TransactionInfo = ({
+  transactionRef,
   totalIncome,
   totalExpense,
   carryForward,
@@ -58,7 +59,7 @@ const TransactionInfo = ({
           <AddButton onClick={handleAddButtonClick} />
         </div>
       </div>
-      <div className="transaction-history">
+      <div className="transaction-history" ref={transactionRef}>
         <h4>Transaction History</h4>
         <div className="tab-row" id="tab-row">
           <div
