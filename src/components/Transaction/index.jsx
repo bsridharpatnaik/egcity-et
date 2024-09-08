@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from "react";
 import "./index.css";
 import { ReactComponent as Dots } from "../../assets/svgs/blackdots.svg";
 import Menu from "../Menu";
-import { format } from "date-fns";
 import { useDeleteTransactionMutation } from "../../service/api";
 import { toast } from "react-toastify";
 const Transaction = ({
@@ -20,7 +19,6 @@ const Transaction = ({
 
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef(null);
-  const currentDate = new Date();
   const items = [
     {
       label: "Edit",
@@ -67,10 +65,10 @@ const handleDelete=async()=>{
     };
   }, []);
   return (
-    <div
+     <div
       className="transaction-item"
       style={{ borderBottom: borderBottom, backgroundColor: background }}
-    >
+      >
       <div className="transaction-icon">{activeTab?.toUpperCase()?.substring(0,1)}</div>
       <div className="transaction-details">
         <strong>{item?.title}</strong>
@@ -99,11 +97,11 @@ const handleDelete=async()=>{
           </div>
         </div>
       )}
-      <div
+       <div
         className="dots-container"
         ref={menuRef}
         style={{ position: "relative" }}
-      >
+       >
         {showIcon && (
           <Dots className="frame-icon" onClick={() => setShowMenu(!showMenu)} />
         )}
