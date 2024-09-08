@@ -12,6 +12,7 @@ import { addDays, subDays, addMonths, subMonths } from "date-fns";
 import { useGetDashboardTransactionDataQuery } from "../../service/api";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import { useNavigate } from "react-router-dom";
 
 function BalanceCard() {
   const [toggle, setToggle] = useState("D");
@@ -34,7 +35,6 @@ function BalanceCard() {
   const handleToggle = (value) => {
     setToggle(value);
   };
-  console.log("data",data);
   function formatDate(dateString) {
     const date = new Date(dateString);
     const day = String(date.getDate()).padStart(2, '0');
@@ -70,6 +70,7 @@ function BalanceCard() {
   const user = JSON.parse(localStorage.getItem("user"));
 
   const menuRef = useRef(null);
+  const navigate=useNavigate()
   const items = [
     {
       label: "Export to PDF",
@@ -88,9 +89,11 @@ function BalanceCard() {
       label: "History",
       onClick: () => {
         setShowMenu(false);
+        navigate("/history")
+        
       },
     },
-    ...(user?.username !== "anonymous" ? [{
+    ...((user?.username && user?.username !== "anonymous") ? [{
       label: "Logout",
       onClick: () => {
         localStorage.clear();
@@ -119,16 +122,39 @@ function BalanceCard() {
     }
   }, [data]);
   const exportToPDF = () => {
-    console.log("Clicked");
     const input = transactionRef.current;
-    html2canvas(input, { scale: 2 }) // Increase the scale for better quality
+  
+    if (!input) {
+      console.error("Invalid element: transactionRef is not attached to any DOM element");
+      return;
+    }
+  
+    html2canvas(input, { scale: 2 })
       .then((canvas) => {
         const imgData = canvas.toDataURL("image/png");
         const pdf = new jsPDF("p", "mm", "a4");
-        const imgProps = pdf.getImageProperties(imgData);
+  
         const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-        pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+        const pdfHeight = pdf.internal.pageSize.getHeight();
+  
+        const canvasWidth = canvas.width;
+        const canvasHeight = canvas.height;
+        const imgHeight = (canvasHeight * pdfWidth) / canvasWidth;
+  
+        let heightLeft = imgHeight;
+        let position = 0;
+  
+        // Add the first page
+        pdf.addImage(imgData, "PNG", 0, position, pdfWidth, imgHeight);
+        heightLeft -= pdfHeight;
+  
+        while (heightLeft > 0) {
+          position = heightLeft - imgHeight;
+          pdf.addPage();
+          pdf.addImage(imgData, "PNG", 0, position, pdfWidth, imgHeight);
+          heightLeft -= pdfHeight;
+        }
+  
         pdf.save("transactions.pdf");
       })
       .catch((err) => {
@@ -210,15 +236,14 @@ function BalanceCard() {
           </button>
         </div>
       </div>
-      <div ref={transactionRef}> 
       <TransactionInfo
+      transactionRef={transactionRef}
         totalIncome={dashboardData.totalIncome}
         totalExpense={dashboardData.totalExpense}
         carryForward={dashboardData.carryForward}
         expense={dashboardData.transactionsByType.EXPENSE}
         income={dashboardData.transactionsByType.INCOME}
       />
-      </div>
     </div>
   );
 }

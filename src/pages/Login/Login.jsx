@@ -41,7 +41,6 @@ function Login() {
 
       if (response.ok) {
         const data = await response.json();
-        console.log('Login successful', data);
         window.location.href="/dashboard"
         localStorage.setItem("user",JSON.stringify(data))
         // Handle successful login, e.g., redirect to dashboard

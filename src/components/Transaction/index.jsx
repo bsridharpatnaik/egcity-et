@@ -66,7 +66,6 @@ const handleDelete=async()=>{
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-console.log("Item",item);
   return (
     <div
       className="transaction-item"

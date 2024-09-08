@@ -6,7 +6,6 @@ import { useGetHistoryQuery } from '../../service/api';
 
 const History = () => {
   const { data }=useGetHistoryQuery()
-  console.log("Data",data);
   return (
     <div className='wrapper'>
     <div className='wrapper_container_heading'>
