@@ -66,8 +66,8 @@ export const api = createApi({
       }),
     }),
     getDocumentationVault: builder.query({
-      query: () => ({
-        url: `/vault/folders`,
+      query: (id) => ({
+        url: `/vault/folders?folderId=${id}`,
         method: "GET",
       }),
     }),

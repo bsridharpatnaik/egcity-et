@@ -147,7 +147,6 @@ function BalanceCard() {
         // Add the first page
         pdf.addImage(imgData, "PNG", 0, position, pdfWidth, imgHeight);
         heightLeft -= pdfHeight;
-  
         while (heightLeft > 0) {
           position = heightLeft - imgHeight;
           pdf.addPage();

@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from "react";
 import "./index.css";
 import { ReactComponent as Dots } from "../../assets/svgs/blackdots.svg";
 import Menu from "../Menu";
-import { format } from "date-fns";
 import { useDeleteTransactionMutation } from "../../service/api";
 import { toast } from "react-toastify";
 const Transaction = ({
@@ -20,7 +19,6 @@ const Transaction = ({
 
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef(null);
-  const currentDate = new Date();
   const items = [
     {
       label: "Edit",
