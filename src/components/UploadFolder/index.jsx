@@ -3,11 +3,15 @@ import { ReactComponent as Cross } from "../../assets/svgs/cross.svg";
 import { ReactComponent as UploadIcon } from "../../assets/svgs/Folder2.svg";
 
 import "./index.css";
+import { useAddSubFolderMutation, useAddSubFolderQuery, useUploadFileMutation } from "../../service/api";
 
 
 const UploadFolder = ({isOpen ,handleCloseModal}) => {
   const [files, setFiles] = useState([]);
-  const [submissionData, setSubmissionData] = useState({});
+  const [submissionData, setSubmissionData] = useState({
+    folder:""
+  });
+  const [uploadFolder]=useAddSubFolderMutation()
 //   const handleFileChange = async (event) => {
 //     try {
 //       const newFile = event.target.files[0];
@@ -32,76 +36,24 @@ const UploadFolder = ({isOpen ,handleCloseModal}) => {
     setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
   };
 
-  const handleInputChange = (e, name) => {
-    const { value, type, checked } = e.target;
+  const handleInputChange = (e) => {
+    const { name,value } = e.target;
     setSubmissionData((prevState) => ({
       ...prevState,
-      [name]: type === "checkbox" ? checked : value,
+      [name]:value,
     }));
   };
 
 
-//   const submitRequest = async (e) => {
-//     e.stopPropagation();
-//     const todayDate =  getFormattedDate();
-//     const data = {
-//       transactionType: submissionData.transactionType.toUpperCase(),
-//       date: todayDate,
-//       title: submissionData.title,
-//       party: submissionData.selectedParty,
-//       amount: submissionData.amount,
-//       files: filesDetail,
-//     };
-//    try{
-//     if(isUpdate){
-//      const response=await update({id:dataToShow.id , data});
-//      if(response?.error){
-//       toast.error(response?.error?.data?.message)
-//     }else{
-//       setSubmissionData({
-//         title: "",
-//         amount: 0,
-//         selectedParty: null,
-//         transactionType: "Income",
-//       });
-//       setValue({})
-//       setFiles([]);
-//       setFilesDetail([]);
-//       setIsModalOpen(false)
-//       toast.success("Updated Successfully")
-//     }
-//     }else{
-//       const response = await createTransaction(data);
-//       if(response?.error){
-//         toast.error(response?.error?.data?.message)
-//       }else{
-//         setSubmissionData({
-//           title: "",
-//           amount: 0,
-//           selectedParty: null,
-//           transactionType: "Income",
-//         });
-//         setValue({})
-//         setFiles([]);
-//         setFilesDetail([]);
-//         setIsModalOpen(false)
+  const submitRequest = async (e) => {
+    e.stopPropagation();
+   try{
+     const res=await uploadFolder(submissionData.folder,)
+   }catch(err){
 
-//         toast.success("Added Successfully")
-//       }
-
-//     }
-//    }catch(error){
-//     setSubmissionData({
-//       title: "",
-//       amount: 0,
-//       selectedParty: null,
-//       transactionType: "Income",
-//     });
-//     setValue({})
-//     setFiles([]);
-//     setFilesDetail([]);
-//    }
-//   };
+   }
+   
+  };
 return (
      <div className={`modal-overlay ${isOpen ? "show" : ""}`}>
        <div
@@ -118,14 +70,15 @@ return (
             <UploadIcon />
             <input
               id="inputField"
-              value={submissionData.amount}
-              onChange={(e) => handleInputChange(e, "amount")}
-              type="number"
+              name="folder"
+              value={submissionData.folder}
+              onChange={handleInputChange}
+              type="text"
               placeholder="Enter Folder Name"
             />
           </div>
         </div>
-        <button  className="modal-add-button">
+        <button  className="modal-add-button" onClick={submitRequest}>
         Add Folder
         </button>
       </div>
