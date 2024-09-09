@@ -265,16 +265,9 @@ const AddTransactionModal = ({dataToShow, isOpen, setIsModalOpen, isUpdate }) =>
             />
           </div>
         </div>
-       
-
         <div className="input-group_">
           <label>Select Party</label>
-          {/* <Select
-            options={options}
-            styles={customStyles}
-            placeholder="Select Party"
-          /> */}
-          <CreatableSelect
+           <CreatableSelect
             isClearable
             isDisabled={isLoading}
             isLoading={isLoading}
@@ -283,7 +276,7 @@ const AddTransactionModal = ({dataToShow, isOpen, setIsModalOpen, isUpdate }) =>
             options={options}
             styles={customStyles}
             value={value} 
-          />
+           />
         </div>
 
         <div className="modal-upload input-group_">

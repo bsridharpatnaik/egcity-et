@@ -236,7 +236,7 @@ function BalanceCard() {
         </div>
       </div>
       <TransactionInfo
-      transactionRef={transactionRef}
+        transactionRef={transactionRef}
         totalIncome={dashboardData.totalIncome}
         totalExpense={dashboardData.totalExpense}
         carryForward={dashboardData.carryForward}

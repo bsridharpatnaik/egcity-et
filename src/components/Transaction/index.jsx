@@ -65,10 +65,10 @@ const handleDelete=async()=>{
     };
   }, []);
   return (
-    <div
+     <div
       className="transaction-item"
       style={{ borderBottom: borderBottom, backgroundColor: background }}
-    >
+      >
       <div className="transaction-icon">{activeTab?.toUpperCase()?.substring(0,1)}</div>
       <div className="transaction-details">
         <strong>{item?.title}</strong>
@@ -97,11 +97,11 @@ const handleDelete=async()=>{
           </div>
         </div>
       )}
-      <div
+       <div
         className="dots-container"
         ref={menuRef}
         style={{ position: "relative" }}
-      >
+       >
         {showIcon && (
           <Dots className="frame-icon" onClick={() => setShowMenu(!showMenu)} />
         )}

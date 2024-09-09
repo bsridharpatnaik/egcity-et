@@ -70,6 +70,14 @@ export const api = createApi({
         url: `/vault/folders?folderId=${id}`,
         method: "GET",
       }),
+      providesTags: ["Folders"],
+    }),
+    addSubFolder: builder.mutation({
+      query: ({ name, id }) => ({
+        url: `/vault/folders?name=${name}&parentId=${id}`,
+        method: "POST",
+      }),
+      invalidatesTags: ["Folders"],
     }),
   }),
 });
@@ -82,5 +90,6 @@ export const {
   useDeleteTransactionMutation,
   useUpdateTransactionMutation,
   useGetHistoryQuery,
-  useGetDocumentationVaultQuery
+  useGetDocumentationVaultQuery,
+  useAddSubFolderMutation,
 } = api;

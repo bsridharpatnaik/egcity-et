@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./index.css";
 
 const Breadcrumb = ({ data }) => {
-  const [folderData, setFolderData] = useState([])
+  const [folderData, setFolderData] = useState([]);
   const onlyOne = folderData.length === 1;
   const shouldShowEllipsis = folderData.length > 3;
   let secondPlaceData = "";
@@ -11,11 +11,11 @@ const Breadcrumb = ({ data }) => {
   }
   const lastLink = folderData[folderData.length - 1];
 
-  useEffect(()=>{
-    if(data.length > 0){
-      setFolderData(data)
+  useEffect(() => {
+    if (data.length > 0) {
+      setFolderData(data);
     }
-  },[data])
+  }, [data]);
 
   return (
     <nav aria-label="breadcrumb">
@@ -24,7 +24,7 @@ const Breadcrumb = ({ data }) => {
           <span>Home</span>
           <div>&nbsp;/&nbsp;</div>
           <span>{secondPlaceData.name}&nbsp;</span>
-          {folderData.length  === 3 && <span>/ {folderData[2].name}</span>}
+          {folderData.length === 3 && <span>/ {folderData[2].name}</span>}
         </li>
         {shouldShowEllipsis && <li className="breadcrumb-item">/ ... /</li>}
         {!shouldShowEllipsis &&
@@ -34,7 +34,7 @@ const Breadcrumb = ({ data }) => {
             </li>
           ))}
         <li className="breadcrumb-item">
-          { shouldShowEllipsis && <span>{lastLink.name}</span>}
+          {shouldShowEllipsis && <span>{lastLink.name}</span>}
         </li>
       </ol>
     </nav>

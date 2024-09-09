@@ -119,7 +119,6 @@ const TransactionInfo = ({
         isOpen={isModalOpen}
         isUpdate={isUpdate}
        setIsModalOpen={setIsModalOpen}
-
       />  
     </div>
   );
