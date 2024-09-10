@@ -27,6 +27,10 @@ const UploadFile = ({ isOpen, handleCloseModal, folderId }) => {
   const handleRemoveFile = (index) => {
     setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
   };
+  const handleClose=()=>{
+    setFiles([])
+    handleCloseModal()
+  }
   return (
     <div className={`modal-overlay ${isOpen ? "show" : ""}`}>
       <div
@@ -113,7 +117,7 @@ const UploadFile = ({ isOpen, handleCloseModal, folderId }) => {
             })}
           </div>
         </div>
-        <button className="modal-add-button" onClick={handleCloseModal}>Add File</button>
+        <button className="modal-add-button"  onClick={handleClose}>Add File</button>
       </div>
     </div>
   );

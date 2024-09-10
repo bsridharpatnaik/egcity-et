@@ -7,9 +7,7 @@ import { toast } from "react-toastify";
 
 const Folder = ({ item, file, refetch, setFolderId,folderId}) => {
  const[delteFolder] = useDeleteFolderMutation()
- const[deleteFile] = useDeleteFileMutation()
- console.log("FOLDR ID",folderId);
- 
+ const[deleteFile] = useDeleteFileMutation() 
   // Function to convert the date-time string
   function convertToTimeFormat(dateTimeString) {
     const [date, time, period] = dateTimeString.split(" ");
