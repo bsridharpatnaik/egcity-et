@@ -8,10 +8,11 @@ export const api = createApi({
       const user = JSON.parse(localStorage.getItem("user"));
       headers.set("Authorization", `Bearer ${user?.token}`);
       headers.set("Cookie", "JSESSIONID=13CE0F53190CC7367FF06C791AC3FF27");
-      if (endpoint !== "uploadFile") {
+      if (endpoint !== "uploadFile" && endpoint !== "addSubFile") {
         headers.set("Content-Type", "application/json");
         return headers;
       }
+
       return headers;
     },
   }),
@@ -79,6 +80,34 @@ export const api = createApi({
       }),
       invalidatesTags: ["Folders"],
     }),
+    addSubFile: builder.mutation({
+      query: (formData) => {
+        return {
+          url: `/vault/files`,
+          method: "POST",
+          body: formData,
+        };
+      },
+      invalidatesTags: ["Folders"],
+    }),
+    deleteFolder: builder.mutation({
+      query: (id) => {
+        return {
+          url: `/vault/folders/${id}`,
+          method: "DELETE",
+        };
+      },
+      invalidatesTags: ["Folders"],
+    }),
+    deleteFile: builder.mutation({
+      query: (id) => {
+        return {
+          url: `/vault/files/${id}`,
+          method: "DELETE",
+        };
+      },
+      invalidatesTags: ["Folders"],
+    }),
   }),
 });
 
@@ -92,4 +121,7 @@ export const {
   useGetHistoryQuery,
   useGetDocumentationVaultQuery,
   useAddSubFolderMutation,
+  useAddSubFileMutation,
+  useDeleteFolderMutation,
+  useDeleteFileMutation
 } = api;

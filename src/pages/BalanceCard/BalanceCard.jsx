@@ -82,6 +82,7 @@ function BalanceCard() {
     {
       label: "Documentation Vault",
       onClick: () => {
+        navigate("/documentation-vault")
         setShowMenu(false);
       },
     },

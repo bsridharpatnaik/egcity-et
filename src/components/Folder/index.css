@@ -27,6 +27,7 @@
   
 .transaction-details {
     flex-grow: 1;
+    width:10px
   }
   .transaction-details span {
    font-weight: 400;
@@ -59,7 +60,7 @@
     margin-left: 15px;
     color: #181D31;
   }
-  .dots-container{
+  .dots-container_folder{
     position:relative;
     height:40px;
     margin-left: 10px;

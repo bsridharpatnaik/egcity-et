@@ -65,13 +65,13 @@ const Documentation = () => {
       {folderData &&
         folderData?.subFolders.map((item, index) => {
           return (
-            <Folder item={item} refetch={refetch} setFolderId={setFolderId} />
+            <Folder item={item} file={false} folderId={folderId} refetch={refetch} setFolderId={setFolderId} />
           );
         })}
       {folderData &&
         folderData?.files.map((item, index) => {
           return (
-            <Folder item={item} refetch={refetch} setFolderId={setFolderId} />
+            <Folder item={item} file={true} folderId={folderId} refetch={refetch} setFolderId={setFolderId} />
           );
         })}
       <div className="add-btn">
@@ -88,6 +88,8 @@ const Documentation = () => {
         <UploadFile
           isOpen={isFileOpen}
           handleCloseModal={() => setIsFileOpen(false)}
+          folderId={folderData?.id}
+
         />
       </div>
     </div>
