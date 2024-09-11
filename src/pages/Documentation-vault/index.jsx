@@ -60,7 +60,7 @@ const Documentation = () => {
           <Left onClick={backClick} />
           <h5>Document Vault</h5>
         </div>
-        <Breadcrumb data={folderData?.breadcrumb || []} />
+        <Breadcrumb data={folderData?.breadcrumb || []} setFolderId={setFolderId} />
       </div>
       {folderData &&
         folderData?.subFolders.map((item, index) => {

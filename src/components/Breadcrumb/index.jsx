@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./index.css";
 
-const Breadcrumb = ({ data }) => {
+const Breadcrumb = ({ data, setFolderId }) => {
   const [folderData, setFolderData] = useState([]);
   const onlyOne = folderData.length === 1;
   const shouldShowEllipsis = folderData.length > 3;
@@ -10,6 +10,10 @@ const Breadcrumb = ({ data }) => {
     secondPlaceData = folderData[1];
   }
   const lastLink = folderData[folderData.length - 1];
+
+  const fetchClickedTitleinfo = (folderId)=>{
+    setFolderId(folderId);
+  }
 
   useEffect(() => {
     if (data.length > 0) {
@@ -21,15 +25,15 @@ const Breadcrumb = ({ data }) => {
     <nav aria-label="breadcrumb">
       <ol className="breadcrumb">
         <li className="breadcrumb-item">
-          <span>Home</span>
+          <span onClick={()=>fetchClickedTitleinfo(folderData[0].id)}>Home</span>
           <div>&nbsp;/&nbsp;</div>
-          <span>{secondPlaceData.name}&nbsp;</span>
-          {folderData.length === 3 && <span>/ {folderData[2].name}</span>}
+          <span onClick={()=>fetchClickedTitleinfo(folderData[1].id)}>{secondPlaceData.name}&nbsp;</span>
+          {folderData.length === 3 && <span onClick={()=>fetchClickedTitleinfo(folderData[2].id)}>/ {folderData[2].name}</span>}
         </li>
         {shouldShowEllipsis && <li className="breadcrumb-item">/ ... /</li>}
         {!shouldShowEllipsis &&
           folderData.slice(2, folderData.length - 1).map((item, index) => (
-            <li key={index} className="breadcrumb-item">
+            <li onClick={()=>fetchClickedTitleinfo(folderData[index+2].id)} key={index} className="breadcrumb-item">
               <span>/ {item.name}</span>
             </li>
           ))}
