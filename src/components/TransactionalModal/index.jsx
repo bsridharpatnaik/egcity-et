@@ -25,10 +25,11 @@ const AddTransactionModal = ({dataToShow, isOpen, setIsModalOpen, isUpdate }) =>
   const [submissionData, setSubmissionData] = useState({});
   useEffect(() => {
     const defaultValue = {
-      title: dataToShow.title ?? "",
-      amount: dataToShow.amount ?? 0,
-      selectedParty: dataToShow.party,
-      transactionType: dataToShow.transactionType ?? "INCOME",
+      title: dataToShow?.title ?? "",
+      amount: dataToShow?.amount ?? 0,
+      selectedParty: dataToShow?.party,
+      date:dataToShow?.date ?? null,
+      transactionType: dataToShow?.transactionType ?? "INCOME",
     };
     setSubmissionData(defaultValue);
     // Set the initial value for the select if `dataToShow.selectedParty` exists
@@ -88,8 +89,8 @@ const AddTransactionModal = ({dataToShow, isOpen, setIsModalOpen, isUpdate }) =>
         setFilesDetail((prev) => [
           ...prev,
           {
-            fileUuid: response.data.fileUuid,
-            filename: response.data.filename,
+            fileUuid: response?.data?.fileUuid,
+            filename: response?.data?.filename,
           },
         ]);
       }
@@ -128,13 +129,14 @@ const AddTransactionModal = ({dataToShow, isOpen, setIsModalOpen, isUpdate }) =>
   };
   const submitRequest = async (e) => {
     e.stopPropagation();
-    const todayDate =  getFormattedDate();
+    const formattedDate = formatDateForSubmission(submissionData.date);
+
     const data = {
-      transactionType: submissionData.transactionType.toUpperCase(),
-      date: todayDate,
-      title: submissionData.title,
-      party: submissionData.selectedParty,
-      amount: submissionData.amount,
+      transactionType: submissionData?.transactionType.toUpperCase(),
+      date: formattedDate,
+      title: submissionData?.title,
+      party: submissionData?.selectedParty,
+      amount: submissionData?.amount,
       files: filesDetail,
     };
    try{
@@ -147,6 +149,7 @@ const AddTransactionModal = ({dataToShow, isOpen, setIsModalOpen, isUpdate }) =>
         title: "",
         amount: 0,
         selectedParty: null,
+        date:null,
         transactionType: "Income",
       });
       setValue({})
@@ -164,6 +167,7 @@ const AddTransactionModal = ({dataToShow, isOpen, setIsModalOpen, isUpdate }) =>
           title: "",
           amount: 0,
           selectedParty: null,
+          date:null,
           transactionType: "Income",
         });
         setValue({})
@@ -180,12 +184,17 @@ const AddTransactionModal = ({dataToShow, isOpen, setIsModalOpen, isUpdate }) =>
       title: "",
       amount: 0,
       selectedParty: null,
+      date:null,
       transactionType: "Income",
     });
     setValue({})
     setFiles([]);
     setFilesDetail([]);
    }
+  };
+  const formatDateForSubmission = (dateStr) => {
+    const [year, month, day] = dateStr.split("-");
+    return `${day}-${month}-${year}`;
   };
   useEffect(() => {
     if (data && data.length > 0) {
@@ -199,12 +208,19 @@ const AddTransactionModal = ({dataToShow, isOpen, setIsModalOpen, isUpdate }) =>
       title: "",
       amount: 0,
       selectedParty: null,
+      date:null,
       transactionType: "Income",
     });
     setValue({})
     setFiles([]);
     setFilesDetail([]);
   }
+  console.log("submissionData.date",submissionData.date);
+  const convertToDisplayFormat = (dateStr) => {
+    const [day, month, year] = dateStr.split("-");
+    return `${year}-${month}-${day}`; // yyyy-mm-dd format
+  };
+  
   return (
     <div className={`modal-overlay ${isOpen ? "show" : ""}`}>
       <div
@@ -221,7 +237,7 @@ const AddTransactionModal = ({dataToShow, isOpen, setIsModalOpen, isUpdate }) =>
               type="radio"
               name="transactionType"
               value="INCOME"
-              checked={submissionData.transactionType === "INCOME" }
+              checked={submissionData?.transactionType === "INCOME" }
               onChange={(e) => handleInputChange(e, "transactionType")}
               defaultChecked
             />
@@ -232,7 +248,7 @@ const AddTransactionModal = ({dataToShow, isOpen, setIsModalOpen, isUpdate }) =>
               type="radio"
               name="transactionType"
               value="EXPENSE"
-              checked={submissionData.transactionType === "EXPENSE"}
+              checked={submissionData?.transactionType === "EXPENSE"}
               onChange={(e) => handleInputChange(e, "transactionType")}
             />
             Expenses
@@ -245,7 +261,7 @@ const AddTransactionModal = ({dataToShow, isOpen, setIsModalOpen, isUpdate }) =>
             <input
               id="inputField"
               type="text"
-              value={submissionData.title}
+              value={submissionData?.title}
               onChange={(e) => handleInputChange(e, "title")}
               placeholder="Enter Title"
             />
@@ -257,11 +273,23 @@ const AddTransactionModal = ({dataToShow, isOpen, setIsModalOpen, isUpdate }) =>
           <div className="input-wrapper_">
             <input
               id="inputField"
-              value={submissionData.amount}
+              value={submissionData?.amount}
 
               onChange={(e) => handleInputChange(e, "amount")}
               type="number"
               placeholder="Enter Amount"
+            />
+          </div>
+        </div>
+        <div className="input-group_">
+          <label htmlFor="inputField">Date</label>
+          <div className="input-wrapper_">
+            <input
+              id="inputField"
+              value={submissionData?.date ? convertToDisplayFormat(submissionData.date) : ""}
+              onChange={(e) => handleInputChange(e, "date")}
+              type="date"
+              placeholder="DD/MM/YYYY" 
             />
           </div>
         </div>

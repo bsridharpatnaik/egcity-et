@@ -91,7 +91,7 @@ const handleDelete=async()=>{
       </div>
       {showDetails && (
         <div className="transaction-amt">
-          <div className="transaction-amount positive">${item?.amount}</div>
+          <div className="transaction-amount positive">₹{item?.amount}</div>
           <div className="transaction-time">
             {convertToTimeFormat(item?.modificationDate)}
           </div>

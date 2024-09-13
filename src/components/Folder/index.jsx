@@ -74,12 +74,12 @@ if(res?.data?.success){
         )}
       </div>
       <div className="transaction-details">
-        {file ? item?.filename : item.name}
+      <span>  {file ? item?.filename : item.name}</span>
         <p style={{ marginTop: "3px", color: "#A6AEC1", fontWeight: "200" }}>
           {item.itemCount}
         </p>
       </div>
-      <span style={{ color: "#A6AEC1", fontSize: "12px" }}>
+      <span style={{ color: "#A6AEC1", fontSize: "12px",marginTop:"20px" }}>
         {item.lastUpdateDate || ""}
       </span>
       <div className="dots-container_folder">

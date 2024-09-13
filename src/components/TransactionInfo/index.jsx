@@ -43,7 +43,7 @@ const TransactionInfo = ({
           </div>
           <div className="text">
             <p>Total Income</p>
-            <h3 className="amount positive">${totalIncome}</h3>
+            <h3 className="amount positive">₹{totalIncome}</h3>
           </div>
         </div>
         <div className="summary-item">
@@ -52,7 +52,7 @@ const TransactionInfo = ({
           </div>
           <div className="text">
             <p>Total Expenses</p>
-            <h3 className="amount negative">${totalExpense}</h3>
+            <h3 className="amount negative">₹{totalExpense}</h3>
           </div>
         </div>
         <div className="add-btn">
@@ -118,7 +118,7 @@ const TransactionInfo = ({
        dataToShow={dataToShow}
         isOpen={isModalOpen}
         isUpdate={isUpdate}
-       setIsModalOpen={setIsModalOpen}
+        setIsModalOpen={setIsModalOpen}
       />  
     </div>
   );

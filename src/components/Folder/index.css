@@ -32,6 +32,7 @@
   .transaction-details span {
    font-weight: 400;
    color: #181D31;
+   font-size: 15px;
   }
   .transaction-details p {
     margin: 0;

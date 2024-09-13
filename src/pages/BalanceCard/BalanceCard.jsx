@@ -28,7 +28,6 @@ function BalanceCard() {
     username: "anonymous",
   });
   const transactionRef = useRef(null); 
-
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showMenu, setShowMenu] = useState(false);
   const { data, refetch } = useGetDashboardTransactionDataQuery(formatDate(selectedDate));

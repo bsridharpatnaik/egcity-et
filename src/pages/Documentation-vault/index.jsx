@@ -7,6 +7,8 @@ import Breadcrumb from "../../components/Breadcrumb";
 import { useGetDocumentationVaultQuery } from "../../service/api";
 import UploadFolder from "../../components/UploadFolder/index";
 import UploadFile from "../../components/UploadFile/index";
+import { useNavigate } from "react-router-dom";
+import SkeletonCard from "../../components/Skeleton";
 
 const Documentation = () => {
   const [showMenu, setShowMenu] = useState(false);
@@ -14,7 +16,8 @@ const Documentation = () => {
   const [folderData, setFolderData] = useState();
   const [isOpen, setIsOpen] = useState(false);
   const [isFileOpen, setIsFileOpen] = useState(false);
-  const { data: fetchedData, refetch } =
+  const navigate=useNavigate()
+  const { data: fetchedData, refetch,isFetching } =
     useGetDocumentationVaultQuery(folderId);
   const items = [
     {
@@ -34,7 +37,11 @@ const Documentation = () => {
   ];
 
   const backClick = () => {
-    setFolderId(folderData.parentFolderId || "");
+    if(folderData.parentFolderId){
+      setFolderId(folderData.parentFolderId)
+    }else{
+      navigate("/dashboard")
+    }
   };
 
   useEffect(() => {
@@ -47,12 +54,6 @@ const Documentation = () => {
     if (folderData?.name !== "root") refetch();
   }, [folderId]);
 
-  // const folderDat = [
-  //   { label: "Home", url: "/" },
-  //   { label: "Documents", url: "/documents" },
-  //   { label: "Project", url: "/documents/projects" },
-  //   { label: "Current Folder", url: "/documents/projects/current" },
-  // ];
   return (
     <div className="wrapper">
       <div className="wrapper_container_heading">
@@ -62,18 +63,38 @@ const Documentation = () => {
         </div>
         <Breadcrumb data={folderData?.breadcrumb || []} setFolderId={setFolderId} />
       </div>
-      {folderData &&
-        folderData?.subFolders.map((item, index) => {
-          return (
-            <Folder item={item} file={false} folderId={folderId} refetch={refetch} setFolderId={setFolderId} />
-          );
-        })}
-      {folderData &&
-        folderData?.files.map((item, index) => {
-          return (
-            <Folder item={item} file={true} folderId={folderId} refetch={refetch} setFolderId={setFolderId} />
-          );
-        })}
+      {isFetching ? (
+        <>
+          {Array(4)
+            .fill()
+            .map((_, index) => (
+              <SkeletonCard key={index} />
+            ))}
+        </>
+      ) : (
+        <>
+          {folderData?.subFolders.map((item, index) => (
+            <Folder
+              key={index}
+              item={item}
+              file={false}
+              folderId={folderId}
+              refetch={refetch}
+              setFolderId={setFolderId}
+            />
+          ))}
+          {folderData?.files.map((item, index) => (
+            <Folder
+              key={index}
+              item={item}
+              file={true}
+              folderId={folderId}
+              refetch={refetch}
+              setFolderId={setFolderId}
+            />
+          ))}
+        </>
+      )}
       <div className="add-btn">
         <AddButton
           onClick={() => setShowMenu((prev) => !prev)}
