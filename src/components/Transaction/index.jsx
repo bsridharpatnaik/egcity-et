@@ -4,6 +4,7 @@ import { ReactComponent as Dots } from "../../assets/svgs/blackdots.svg";
 import Menu from "../Menu";
 import { useDeleteTransactionMutation } from "../../service/api";
 import { toast } from "react-toastify";
+import Swal from "sweetalert2";
 const Transaction = ({
   activeTab,
   borderBottom,
@@ -37,15 +38,33 @@ const Transaction = ({
     },
   ];
     const [deleteTransaction] = useDeleteTransactionMutation()
-const handleDelete=async()=>{
- try{
-   const res= await deleteTransaction(item.id)
-   toast.success("Deleted Successfully")
- }catch(err){
-  toast.error("Something went wrong")
-  console.log("Err",err);
- }
-}
+
+    const handleDelete = async () => {
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "Do you really want to delete this item? This action cannot be undone!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          try {
+            const res = await deleteTransaction(item.id);
+            toast.success("Deleted Successfully");
+            Swal.fire(
+              'Deleted!',
+              'Your item has been deleted.',
+              'success'
+            );
+          } catch (err) {
+            toast.error("Something went wrong");
+            console.log("Err", err);
+          }
+        }
+      });
+    };
   const handleClickOutside = (event) => {
     if (menuRef.current && !menuRef.current.contains(event.target)) {
       setShowMenu(false);

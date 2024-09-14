@@ -18,6 +18,9 @@
     padding: 3px;
     display: flex;
 }
+.selected{
+    background-color: #FFED00 !important;
+}
 .income-tab{
     padding: 8px 12px;
     margin: 5px;

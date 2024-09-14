@@ -6,11 +6,16 @@ export const api = createApi({
     baseUrl: `${process.env.REACT_APP_BASE_URL}`,
     prepareHeaders: (headers, { endpoint }) => {
       const user = JSON.parse(localStorage.getItem("user"));
-      headers.set("Authorization", `Bearer ${user?.token}`);
+      if (user?.token) {
+        headers.set("Authorization", `Bearer ${user?.token}`);
+      }
       headers.set("Cookie", "JSESSIONID=13CE0F53190CC7367FF06C791AC3FF27");
-      if (endpoint !== "uploadFile" && endpoint !== "addSubFile") {
-        headers.set("Content-Type", "application/json");
+      if (endpoint === "uploadFile" || endpoint === "addSubFile") {
         return headers;
+      } else if (endpoint === "downloadFile") {
+        headers.set("Content-Type", "application/octet-stream");
+      } else {
+        headers.set("Content-Type", "application/json");
       }
 
       return headers;
@@ -108,6 +113,21 @@ export const api = createApi({
       },
       invalidatesTags: ["Folders"],
     }),
+    downloadFile: builder.query({
+      query: ({ id }) => ({
+        url: `/vault/files/download/${id}`,
+        responseType: "blob",
+      }),
+      transformResponse: (response) => {
+        const url = window.URL.createObjectURL(new Blob([response]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", "file.png");
+        document.body.appendChild(link);
+        link.click();
+        link.parentNode.removeChild(link);
+      },
+    }),
   }),
 });
 
@@ -123,5 +143,6 @@ export const {
   useAddSubFolderMutation,
   useAddSubFileMutation,
   useDeleteFolderMutation,
-  useDeleteFileMutation
+  useDeleteFileMutation,
+  useDownloadFileQuery
 } = api;

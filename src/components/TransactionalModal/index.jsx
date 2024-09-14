@@ -16,6 +16,7 @@ const AddTransactionModal = ({dataToShow, isOpen, setIsModalOpen, isUpdate }) =>
     useCreateTransactionMutation();
   const [uploadFile, { isLoading: fileLoading }] = useUploadFileMutation();
   const [update, { isLoading: updateLoading }] = useUpdateTransactionMutation();
+  const currentDate = new Date().toISOString().split("T")[0]; // Get current date in YYYY-MM-DD format
 
   const [files, setFiles] = useState([]);
   const [filesDetail, setFilesDetail] = useState([]);
@@ -28,11 +29,10 @@ const AddTransactionModal = ({dataToShow, isOpen, setIsModalOpen, isUpdate }) =>
       title: dataToShow?.title ?? "",
       amount: dataToShow?.amount ?? 0,
       selectedParty: dataToShow?.party,
-      date:dataToShow?.date ?? null,
+      date:dataToShow?.date ?? currentDate,
       transactionType: dataToShow?.transactionType ?? "INCOME",
     };
     setSubmissionData(defaultValue);
-    // Set the initial value for the select if `dataToShow.selectedParty` exists
     if (dataToShow.party) {
       setValue(createOption(dataToShow.party));
     }
@@ -215,7 +215,6 @@ const AddTransactionModal = ({dataToShow, isOpen, setIsModalOpen, isUpdate }) =>
     setFiles([]);
     setFilesDetail([]);
   }
-  console.log("submissionData.date",submissionData.date);
   const convertToDisplayFormat = (dateStr) => {
     const [day, month, year] = dateStr.split("-");
     return `${year}-${month}-${day}`; // yyyy-mm-dd format
@@ -286,7 +285,7 @@ const AddTransactionModal = ({dataToShow, isOpen, setIsModalOpen, isUpdate }) =>
           <div className="input-wrapper_">
             <input
               id="inputField"
-              value={submissionData?.date ? convertToDisplayFormat(submissionData.date) : ""}
+              value={(submissionData?.date && dataToShow?.date) ? convertToDisplayFormat(submissionData.date) : submissionData.date}
               onChange={(e) => handleInputChange(e, "date")}
               type="date"
               placeholder="DD/MM/YYYY" 

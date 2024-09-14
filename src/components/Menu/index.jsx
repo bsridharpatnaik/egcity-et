@@ -7,7 +7,11 @@ const Menu = ({ items,documentPage }) => {
     <div className={!documentPage ? "menu-container" : "menu-container-document"}>
       <ul className="menu-list">
         {items.map((item, index) => (
-          <li key={index} className="menu-item" onClick={item.onClick}>
+          <li key={index} className="menu-item" onClick={(e) => {
+            e.stopPropagation(); 
+            item.onClick();
+          }}
+          >
             {item.label}
           </li>
         ))}

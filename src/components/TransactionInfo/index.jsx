@@ -1,4 +1,4 @@
-import React, {  useState } from "react";
+import React, { useState } from "react";
 import { ReactComponent as IncomeIcon } from "../../assets/svgs/Download.svg";
 import { ReactComponent as ExpenseIcon } from "../../assets/svgs/Upload.svg";
 import Transaction from "../../components/Transaction";
@@ -23,12 +23,10 @@ const TransactionInfo = ({
   };
 
   const handleAddButtonClick = (item) => {
-    setdataToShow(item)
+    setdataToShow(item);
     setIsModalOpen(true);
-    setIsUpdate(false)
+    setIsUpdate(false);
   };
-
-
 
   return (
     <div className="transaction-info">
@@ -63,13 +61,15 @@ const TransactionInfo = ({
         <h4>Transaction History</h4>
         <div className="tab-row" id="tab-row">
           <div
-            className='expense-tab'
+            className={`expense-tab ${
+              activeTab === "Expense" ? "selected" : ""
+            }`}
             onClick={() => handleTabClick("Expense")}
           >
             Expenses
           </div>
           <div
-            className='income-tab'
+            className={`income-tab ${activeTab === "Income" ? "selected" : ""}`}
             onClick={() => handleTabClick("Income")}
           >
             Income
@@ -115,11 +115,11 @@ const TransactionInfo = ({
           })}
       </div>
       <AddTransactionModal
-       dataToShow={dataToShow}
+        dataToShow={dataToShow}
         isOpen={isModalOpen}
         isUpdate={isUpdate}
         setIsModalOpen={setIsModalOpen}
-      />  
+      />
     </div>
   );
 };
