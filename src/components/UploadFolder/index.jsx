@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ReactComponent as Cross } from "../../assets/svgs/cross.svg";
 import { ReactComponent as UploadIcon } from "../../assets/svgs/Folder2.svg";
 
@@ -55,12 +55,16 @@ const UploadFolder = ({ isOpen, handleCloseModal, folderId }) => {
         name: submissionData?.folder,
         id: folderId ?? null,
       });
+      console.log("res?.data?",res?.data);
+       console.log("res",res);
+       
       if (res?.data?.success) {
         toast.success(res?.data?.message);
       } else {
-        toast.error(res?.data?.message);
+        toast.error(res?.error?.data?.message);
       }
     } catch (err) {
+      console.log("Err",err);
       toast.error(err?.data?.message);
     } finally {
       handleCloseModal();
@@ -69,6 +73,13 @@ const UploadFolder = ({ isOpen, handleCloseModal, folderId }) => {
       });
     }
   };
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    if (isOpen && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isOpen]);
   return (
     <div className={`modal-overlay ${isOpen ? "show" : ""}`}>
       <div
@@ -90,6 +101,7 @@ const UploadFolder = ({ isOpen, handleCloseModal, folderId }) => {
               onChange={handleInputChange}
               type="text"
               placeholder="Enter Folder Name"
+              ref={inputRef} 
             />
           </div>
         </div>

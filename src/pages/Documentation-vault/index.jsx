@@ -110,7 +110,6 @@ const Documentation = () => {
           isOpen={isFileOpen}
           handleCloseModal={() => setIsFileOpen(false)}
           folderId={folderData?.id}
-
         />
       </div>
     </div>

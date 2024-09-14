@@ -24,10 +24,11 @@ const AddTransactionModal = ({dataToShow, isOpen, setIsModalOpen, isUpdate }) =>
   const [options, setOptions] = useState([]);
   const [value, setValue] = useState();
   const [submissionData, setSubmissionData] = useState({});
+  
   useEffect(() => {
     const defaultValue = {
       title: dataToShow?.title ?? "",
-      amount: dataToShow?.amount ?? 0,
+      amount: dataToShow?.amount !== undefined ? dataToShow.amount : null, 
       selectedParty: dataToShow?.party,
       date:dataToShow?.date ?? currentDate,
       transactionType: dataToShow?.transactionType ?? "INCOME",
@@ -273,7 +274,6 @@ const AddTransactionModal = ({dataToShow, isOpen, setIsModalOpen, isUpdate }) =>
             <input
               id="inputField"
               value={submissionData?.amount}
-
               onChange={(e) => handleInputChange(e, "amount")}
               type="number"
               placeholder="Enter Amount"

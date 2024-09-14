@@ -34,7 +34,7 @@ const Folder = ({ item, file, refetch, setFolderId,folderId}) => {
   
       // Extract the filename from content-disposition if available
       const contentDisposition = response.headers.get('content-disposition');
-      let filename = 'downloaded_file';
+      let filename = item.filename;
   
       if (contentDisposition && contentDisposition.includes('filename=')) {
         filename = contentDisposition.split('filename=')[1].trim().replace(/['"]/g, '');
@@ -134,9 +134,6 @@ const handleClickOutside = (event) => {
     setShowMenu(false);
   }
 };
-
-
-
 const items = [
   ...(file ? [{
     label: "Download",

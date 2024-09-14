@@ -4,6 +4,7 @@ import { ReactComponent as UploadIcon } from "../../assets/svgs/Folder2.svg";
 
 import "./index.css";
 import { useAddSubFileMutation } from "../../service/api";
+import { toast } from "react-toastify";
 
 const UploadFile = ({ isOpen, handleCloseModal, folderId }) => {
   const [files, setFiles] = useState([]);
@@ -19,6 +20,13 @@ const UploadFile = ({ isOpen, handleCloseModal, folderId }) => {
         formData.append("folderId", folderId); 
         console.log(formData)
         const res = await uploadFile( formData );
+        if(res?.data?.success){
+          toast.success(res?.data?.message);
+
+        }else{
+        toast.error(res?.error?.data?.message);
+
+        }
       }
     } catch (error) {
       console.log("Error", error);
