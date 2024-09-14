@@ -15,13 +15,11 @@ const UploadFile = ({ isOpen, handleCloseModal, folderId }) => {
       const newFile = event.target.files[0];
       if (newFile) {
         setFiles((prevFiles) => [...prevFiles, newFile]);
-  
+
         const formData = new FormData();
-        formData.append("file", newFile); 
-        formData.append("folderId", folderId); 
-        
-        console.log(formData);
-  
+        formData.append("file", newFile);
+        formData.append("folderId", folderId);
+
         const res = await uploadFile(formData);
         if (res?.data?.success) {
           toast.success(res?.data?.message);
@@ -30,19 +28,18 @@ const UploadFile = ({ isOpen, handleCloseModal, folderId }) => {
         }
       }
     } catch (error) {
-      console.log("Error", error);
+      toast.success(error?.data?.message);
     } finally {
-      // Reset the input field to allow selecting the same file again
       event.target.value = "";
     }
   };
   const handleRemoveFile = (index) => {
     setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
   };
-  const handleClose=()=>{
-    setFiles([])
-    handleCloseModal()
-  }
+  const handleClose = () => {
+    setFiles([]);
+    handleCloseModal();
+  };
   return (
     <div className={`modal-overlay ${isOpen ? "show" : ""}`}>
       <div
@@ -51,7 +48,7 @@ const UploadFile = ({ isOpen, handleCloseModal, folderId }) => {
       >
         <div className="top-heading">
           <h2>Upload File</h2>
-          <Cross onClick={handleCloseModal} />
+          <Cross onClick={handleClose} />
         </div>
 
         <div className="modal-upload input-group_">
@@ -129,7 +126,9 @@ const UploadFile = ({ isOpen, handleCloseModal, folderId }) => {
             })}
           </div>
         </div>
-        <button className="modal-add-button"  onClick={handleClose}>Add File</button>
+        <button className="modal-add-button" onClick={handleClose}>
+          Add File
+        </button>
       </div>
     </div>
   );
