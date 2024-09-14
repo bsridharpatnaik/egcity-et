@@ -15,21 +15,25 @@ const UploadFile = ({ isOpen, handleCloseModal, folderId }) => {
       const newFile = event.target.files[0];
       if (newFile) {
         setFiles((prevFiles) => [...prevFiles, newFile]);
+  
         const formData = new FormData();
         formData.append("file", newFile); 
         formData.append("folderId", folderId); 
-        console.log(formData)
-        const res = await uploadFile( formData );
-        if(res?.data?.success){
+        
+        console.log(formData);
+  
+        const res = await uploadFile(formData);
+        if (res?.data?.success) {
           toast.success(res?.data?.message);
-
-        }else{
-        toast.error(res?.error?.data?.message);
-
+        } else {
+          toast.error(res?.error?.data?.message);
         }
       }
     } catch (error) {
       console.log("Error", error);
+    } finally {
+      // Reset the input field to allow selecting the same file again
+      event.target.value = "";
     }
   };
   const handleRemoveFile = (index) => {
