@@ -5,6 +5,7 @@ import Menu from "../Menu";
 import { useDeleteTransactionMutation } from "../../service/api";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
+import TransactionOpenPopup from "../TransactionPopup";
 const Transaction = ({
   activeTab,
   borderBottom,
@@ -20,6 +21,7 @@ const Transaction = ({
 
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef(null);
+  const[isOpen,setIsOpen]=useState(false)
   const items = [
     {
       label: "Edit",
@@ -52,6 +54,7 @@ const Transaction = ({
         if (result.isConfirmed) {
           try {
             const res = await deleteTransaction(item.id);
+            handleCloseModal()
             toast.success("Deleted Successfully");
             Swal.fire(
               'Deleted!',
@@ -70,6 +73,9 @@ const Transaction = ({
       setShowMenu(false);
     }
   };
+  const handleCloseModal=()=>{
+    setIsOpen(false)
+  }
 
   function convertToTimeFormat(dateTimeString) {
     const [date, time, period] = dateTimeString.split(" ");
@@ -84,9 +90,11 @@ const Transaction = ({
     };
   }, []);
   return (
+    <>
      <div
       className="transaction-item"
       style={{ borderBottom: borderBottom, backgroundColor: background }}
+      onClick={()=>setIsOpen(true)}
       >
       <div className="transaction-icon">{activeTab?.toUpperCase()?.substring(0,1)}</div>
       <div className="transaction-details">
@@ -116,7 +124,7 @@ const Transaction = ({
           </div>
         </div>
       )}
-       <div
+       {/* <div
         className="dots-container"
         ref={menuRef}
         style={{ position: "relative" }}
@@ -125,8 +133,10 @@ const Transaction = ({
           <Dots className="frame-icon" onClick={() => setShowMenu(!showMenu)} />
         )}
         {showMenu && <Menu items={items} />}
-      </div>
+      </div> */}
     </div>
+      <TransactionOpenPopup handleDelete={handleDelete}  item={item} isOpen={isOpen} activeTab={activeTab} historyLog={historyLog} date={date} handleCloseModal={handleCloseModal} convertToTimeFormat={convertToTimeFormat} showDetails={showDetails} />
+    </>
   );
 };
 

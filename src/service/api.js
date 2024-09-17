@@ -118,15 +118,11 @@ export const api = createApi({
         url: `/vault/files/download/${id}`,
         responseType: "blob",
       }),
-      transformResponse: (response) => {
-        const url = window.URL.createObjectURL(new Blob([response]));
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", "file.png");
-        document.body.appendChild(link);
-        link.click();
-        link.parentNode.removeChild(link);
-      },
+    }),
+    getMonths: builder.query({
+      query: ({ date }) => ({
+        url: `/dashboard/summary/grouped?startDate=${date}`,
+      }),
     }),
   }),
 });
@@ -144,5 +140,6 @@ export const {
   useAddSubFileMutation,
   useDeleteFolderMutation,
   useDeleteFileMutation,
-  useDownloadFileQuery
+  useDownloadFileQuery,
+  useGetMonthsQuery
 } = api;

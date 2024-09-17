@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { ReactComponent as IncomeIcon } from "../../assets/svgs/Download.svg";
-import { ReactComponent as ExpenseIcon } from "../../assets/svgs/Upload.svg";
+
 import Transaction from "../../components/Transaction";
 import AddButton from "../AddButton";
 import "./index.css";
@@ -30,33 +29,9 @@ const TransactionInfo = ({
 
   return (
     <div className="transaction-info">
-      <div className="c-f">
-        <span>C/F</span>
-        <span>₹{carryForward}</span>
-      </div>
-      <div className="summary">
-        <div className="summary-item">
-          <div className="summary-icon">
-            <IncomeIcon style={{ width: "24px", height: "44px" }} />
-          </div>
-          <div className="text">
-            <p>Total Income</p>
-            <h3 className="amount positive">₹{totalIncome}</h3>
-          </div>
-        </div>
-        <div className="summary-item">
-          <div className="summary-icon-ex">
-            <ExpenseIcon style={{ width: "24px", height: "44px" }} />
-          </div>
-          <div className="text">
-            <p>Total Expenses</p>
-            <h3 className="amount negative">₹{totalExpense}</h3>
-          </div>
-        </div>
-        <div className="add-btn">
+      <div className="add-btn">
           <AddButton onClick={handleAddButtonClick} />
         </div>
-      </div>
       <div className="transaction-history" ref={transactionRef}>
         <h4>Transaction History</h4>
         <div className="tab-row" id="tab-row">
