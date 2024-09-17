@@ -144,7 +144,6 @@ function BalanceCard() {
       console.error("Invalid element: transactionRef is not attached to any DOM element");
       return;
     }
-    
   
     html2canvas(input, { scale: 2 })
       .then((canvas) => {
@@ -164,6 +163,7 @@ function BalanceCard() {
         // Add the first page
         pdf.addImage(imgData, "PNG", 0, position, pdfWidth, imgHeight);
         heightLeft -= pdfHeight;
+  
         while (heightLeft > 0) {
           position = heightLeft - imgHeight;
           pdf.addPage();
