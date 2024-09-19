@@ -12,6 +12,7 @@ import { addDays, subDays, addMonths, subMonths } from "date-fns";
 import { useGetDashboardTransactionDataQuery, useGetMonthsQuery } from "../../service/api";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import 'jspdf-autotable';
 import { useNavigate } from "react-router-dom";
 import MonthlyInfo from "../../components/MonthlyInfo";
 import { ReactComponent as IncomeIcon } from "../../assets/svgs/Download.svg";
@@ -137,45 +138,37 @@ function BalanceCard() {
     }
   }, [data,monthData]);
 
-  const exportToPDF = () => {
-    const input = transactionRef.current;
+
   
-    if (!input) {
-      console.error("Invalid element: transactionRef is not attached to any DOM element");
-      return;
+  const exportToPDF = () => {
+    const pdf = new jsPDF("p", "mm", "a4");
+  const  expenseData=dashboardData.transactionsByType.EXPENSE.map(val=>val)
+  const incomeData=dashboardData.transactionsByType.INCOME.map(val=>val)
+    // Adding Expense Data
+    if (expenseData && expenseData.length > 0) {
+      pdf.text("Expenses", 10, 10);
+      pdf.autoTable({
+        head: [['Date', 'Amount', 'Title','party']],
+        body: expenseData.map(item => [item.date, item.amount, item.title,item.party]),
+        startY: 20,
+      });
     }
   
-    html2canvas(input, { scale: 2 })
-      .then((canvas) => {
-        const imgData = canvas.toDataURL("image/png");
-        const pdf = new jsPDF("p", "mm", "a4");
-  
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = pdf.internal.pageSize.getHeight();
-  
-        const canvasWidth = canvas.width;
-        const canvasHeight = canvas.height;
-        const imgHeight = (canvasHeight * pdfWidth) / canvasWidth;
-  
-        let heightLeft = imgHeight;
-        let position = 0;
-  
-        // Add the first page
-        pdf.addImage(imgData, "PNG", 0, position, pdfWidth, imgHeight);
-        heightLeft -= pdfHeight;
-  
-        while (heightLeft > 0) {
-          position = heightLeft - imgHeight;
-          pdf.addPage();
-          pdf.addImage(imgData, "PNG", 0, position, pdfWidth, imgHeight);
-          heightLeft -= pdfHeight;
-        }
-  
-        pdf.save("transactions.pdf");
-      })
-      .catch((err) => {
-        console.error("Failed to generate PDF", err);
+    // Adding Income Data (on a new page if there is expense data)
+    if (incomeData && incomeData.length > 0) {
+      if (expenseData.length > 0) {
+        pdf.addPage();
+      }
+      pdf.text("Income", 10, 10);
+      pdf.autoTable({
+        head: [['Date', 'Amount', 'Title','party']],
+        body: expenseData.map(item => [item.date, item.amount, item.title,item.party]),
+        startY: 20,
       });
+    }
+  
+    // Save the PDF
+    pdf.save("transactions.pdf");
   };
   return (
     <div>
