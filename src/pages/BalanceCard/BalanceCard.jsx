@@ -369,8 +369,8 @@ function BalanceCard() {
           ) : (
             <TransactionInfo
               transactionRef={transactionRef}
-              expense={dashboardData.transactionsByType.EXPENSE}
-              income={dashboardData.transactionsByType.INCOME}
+              expense={dashboardData?.transactionsByType?.EXPENSE}
+              income={dashboardData?.transactionsByType?.INCOME}
             />
           )}
         </>
