@@ -190,7 +190,6 @@ function BalanceCard() {
         localStorage.clear();
       }
     }
-    monthRefetch()
   }, [data, monthData]);
 
   const exportToPDF = () => {
