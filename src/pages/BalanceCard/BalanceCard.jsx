@@ -277,11 +277,7 @@ function BalanceCard() {
           <Icon className="search-icon" onClick={() => setIsSearching(true)} />
         )}
       </div>
-              {data?.username === "anonymous" && (
-                <a href="/login">
-                  <ThreeIcon className="menu-icon" />
-                </a>
-              )}
+             
               <div className="dots-container">
                 <FrameIcon
                   className="frame-icon"
