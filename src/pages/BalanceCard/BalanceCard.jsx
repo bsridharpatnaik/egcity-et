@@ -84,6 +84,7 @@ function BalanceCard() {
     data: monthData,
     refetch: monthRefetch,
     isFetching: monthFetching,
+
   } = useGetMonthsQuery(
     { date: formatDate(selectedDate) },
     {
@@ -189,6 +190,7 @@ function BalanceCard() {
         localStorage.clear();
       }
     }
+    monthRefetch()
   }, [data, monthData]);
 
   const exportToPDF = () => {
