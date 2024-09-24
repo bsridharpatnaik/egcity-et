@@ -9,10 +9,12 @@ import { ReactComponent as Icon } from "../../assets/svgs/Icon.svg";
 import Menu from "../../components/Menu";
 import TransactionInfo from "../../components/TransactionInfo";
 import { addDays, subDays, addMonths, subMonths } from "date-fns";
-import { useGetDashboardTransactionDataQuery, useGetMonthsQuery } from "../../service/api";
-import html2canvas from "html2canvas";
+import {
+  useGetDashboardTransactionDataQuery,
+  useGetMonthsQuery,
+} from "../../service/api";
 import jsPDF from "jspdf";
-import 'jspdf-autotable';
+import "jspdf-autotable";
 import { useNavigate } from "react-router-dom";
 import MonthlyInfo from "../../components/MonthlyInfo";
 import { ReactComponent as IncomeIcon } from "../../assets/svgs/Download.svg";
@@ -20,6 +22,43 @@ import { ReactComponent as ExpenseIcon } from "../../assets/svgs/Upload.svg";
 import SkeletonCard from "../../components/Skeleton";
 import MonthlyInfoSkeleton from "../../components/Skeleton/SkeletonMonth";
 function BalanceCard() {
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const searchRef = useRef(null);
+  const navigate = useNavigate();
+
+  const toggleSearch = () => {
+    if (searchQuery) {
+      handleSearch(); // Perform search if query exists
+    } else {
+      setIsSearching(true); // Open search bar
+   setSearchQuery("")
+
+    }
+  };
+
+  // Perform the search
+  const handleSearch = () => {
+   if(searchQuery==="Evergr33n"){
+    navigate("/login")
+    return
+   }
+   setSearchQuery("")
+    // You can add your search logic here
+  };
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setIsSearching(false); // Collapse the search bar if clicked outside
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [searchRef]);
   const [toggle, setToggle] = useState("D");
   const [dashboardData, setDashboardData] = useState({
     transactionsByType: {
@@ -32,37 +71,47 @@ function BalanceCard() {
     balance: 0,
     username: "anonymous",
   });
-  const transactionRef = useRef(null); 
+  const transactionRef = useRef(null);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showMenu, setShowMenu] = useState(false);
-  const { data, refetch,isFetching } = useGetDashboardTransactionDataQuery(formatDate(selectedDate),{
-    skip:toggle==="M"
-  });
-  const { data:monthData, refetch:monthRefetch,isFetching:monthFetching } = useGetMonthsQuery({date:formatDate(selectedDate)},{
-    skip:toggle==="D"
-  });
-  
+  const { data, refetch, isFetching } = useGetDashboardTransactionDataQuery(
+    formatDate(selectedDate),
+    {
+      skip: toggle === "M",
+    }
+  );
+  const {
+    data: monthData,
+    refetch: monthRefetch,
+    isFetching: monthFetching,
+  } = useGetMonthsQuery(
+    { date: formatDate(selectedDate) },
+    {
+      skip: toggle === "D",
+    }
+  );
+
   const handleToggle = (value) => {
     setToggle(value);
   };
-  
+
   function formatDate(dateString) {
     const date = new Date(dateString);
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
     const year = date.getFullYear();
-    if(toggle === "M") return `${year}-${month}`;
+    if (toggle === "M") return `${year}-${month}`;
     return `${year}-${month}-${day}`;
   }
 
-  const handleDateChange = async(date) => {
+  const handleDateChange = async (date) => {
     // const formattedDate = await formatDate(date)
     setSelectedDate(date);
     // console.log(formattedDate,"formattedDate")
-    if(toggle==="D"){
-    refetch()
-    }else{
-      monthRefetch()
+    if (toggle === "D") {
+      refetch();
+    } else {
+      monthRefetch();
     }
   };
 
@@ -85,19 +134,18 @@ function BalanceCard() {
   const user = JSON.parse(localStorage.getItem("user"));
 
   const menuRef = useRef(null);
-  const navigate=useNavigate()
   const items = [
     {
       label: "Export to PDF",
-      onClick: () =>{
+      onClick: () => {
         setShowMenu(false);
-        exportToPDF()
-      }
+        exportToPDF();
+      },
     },
     {
       label: "Documentation Vault",
       onClick: () => {
-        navigate("/documentation-vault")
+        navigate("/documentation-vault");
         setShowMenu(false);
       },
     },
@@ -105,19 +153,21 @@ function BalanceCard() {
       label: "History",
       onClick: () => {
         setShowMenu(false);
-        navigate("/history")
-        
+        navigate("/history");
       },
     },
-    ...((user?.username && user?.username !== "anonymous") ? [{
-      label: "Logout",
-      onClick: () => {
-        localStorage.clear();
-        window.location.reload();
-      }
-    }] : [])
+    ...(user?.username && user?.username !== "anonymous"
+      ? [
+          {
+            label: "Logout",
+            onClick: () => {
+              localStorage.clear();
+              window.location.reload();
+            },
+          },
+        ]
+      : []),
   ];
-
 
   useEffect(() => {
     if (data || monthData) {
@@ -126,50 +176,75 @@ function BalanceCard() {
           EXPENSE: data?.transactionsByType?.EXPENSE,
           INCOME: data?.transactionsByType?.INCOME,
         },
-        carryForward:toggle==="D"  ? data?.carryForward  : monthData?.carryForward ,
-        totalIncome:toggle==="D" ?  data?.totalIncome : monthData?.totalIncome,
-        totalExpense:toggle==="D" ?  data?.totalExpense : monthData?.totalExpense,
-        balance:toggle==="D" ?  data?.balance : monthData?.balance,
+        carryForward:
+          toggle === "D" ? data?.carryForward : monthData?.carryForward,
+        totalIncome:
+          toggle === "D" ? data?.totalIncome : monthData?.totalIncome,
+        totalExpense:
+          toggle === "D" ? data?.totalExpense : monthData?.totalExpense,
+        balance: toggle === "D" ? data?.balance : monthData?.balance,
         username: data?.username,
       });
-      if(data?.username==="anonymous"){
-        localStorage.clear()
+      if (data?.username === "anonymous") {
+        localStorage.clear();
       }
     }
-  }, [data,monthData]);
+  }, [data, monthData]);
 
-
-  
   const exportToPDF = () => {
     const pdf = new jsPDF("p", "mm", "a4");
-  const  expenseData=dashboardData.transactionsByType.EXPENSE.map(val=>val)
-  const incomeData=dashboardData.transactionsByType.INCOME.map(val=>val)
-    // Adding Expense Data
+    const expenseData = dashboardData.transactionsByType.EXPENSE.map(
+      (val) => val
+    );
+    const incomeData = dashboardData.transactionsByType.INCOME.map(
+      (val) => val
+    );
+
+    const { balance, carryForward, totalExpense, totalIncome } = dashboardData;
+
+    pdf.setFontSize(16);
+    pdf.text("Transaction Summary", 10, 10);
+
+    pdf.setFontSize(12);
+    pdf.text(`Balance: ${balance}`, 10, 20);
+    pdf.text(`Carry Forward: ${carryForward}`, 10, 30);
+    pdf.text(`Total Expense: ${totalExpense}`, 10, 40);
+    pdf.text(`Total Income: ${totalIncome}`, 10, 50);
+
     if (expenseData && expenseData.length > 0) {
-      pdf.text("Expenses", 10, 10);
+      pdf.text("Expenses", 10, 60);
       pdf.autoTable({
-        head: [['Date', 'Amount', 'Title','party']],
-        body: expenseData.map(item => [item.date, item.amount, item.title,item.party]),
-        startY: 20,
+        head: [["Date", "Amount", "Title", "Party"]],
+        body: expenseData.map((item) => [
+          item.date,
+          item.amount,
+          item.title,
+          item.party,
+        ]),
+        startY: 70,
       });
     }
-  
-    // Adding Income Data (on a new page if there is expense data)
+
     if (incomeData && incomeData.length > 0) {
       if (expenseData.length > 0) {
         pdf.addPage();
       }
       pdf.text("Income", 10, 10);
       pdf.autoTable({
-        head: [['Date', 'Amount', 'Title','party']],
-        body: expenseData.map(item => [item.date, item.amount, item.title,item.party]),
+        head: [["Date", "Amount", "Title", "Party"]],
+        body: incomeData.map((item) => [
+          item.date,
+          item.amount,
+          item.title,
+          item.party,
+        ]),
         startY: 20,
       });
     }
-  
-    // Save the PDF
+
     pdf.save("transactions.pdf");
   };
+
   return (
     <div>
       <div className="balance-card">
@@ -177,13 +252,32 @@ function BalanceCard() {
           <div style={{ display: "flex", gap: "5px" }}>
             <img src={logo} alt="Logo" className="logo" />
             <p style={{ fontSize: "14px", color: "#fff" }}>
-              Hi, {data?.username!=="anonymous" ? data?.username : ""}
+              Hi, {data?.username !== "anonymous" ? data?.username : ""}
             </p>
           </div>
           <div className="user-info">
             <div className="icons">
-              <Icon className="search-icon" />
-              {data?.username==="anonymous" && (
+            <div ref={searchRef} className={`search-input-container ${isSearching ? 'active' : ''}`}>
+        {isSearching ? (
+          <>
+            <input
+              type="text"
+              className="search-input"
+              placeholder="Search..."
+              autoFocus
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <Icon
+              className="search-icon-input"
+              onClick={toggleSearch} // Click to search if input has value
+            />
+          </>
+        ) : (
+          <Icon className="search-icon" onClick={() => setIsSearching(true)} />
+        )}
+      </div>
+              {data?.username === "anonymous" && (
                 <a href="/login">
                   <ThreeIcon className="menu-icon" />
                 </a>
@@ -194,7 +288,7 @@ function BalanceCard() {
                   onClick={() => setShowMenu(!showMenu)}
                   ref={menuRef}
                 />
-                {showMenu && <Menu items={items}  />}
+                {showMenu && <Menu items={items} />}
               </div>
             </div>
           </div>
@@ -255,7 +349,9 @@ function BalanceCard() {
           </div>
           <div className="text">
             <p>Total Income</p>
-            <h3 className="amount positive">₹{dashboardData?.totalIncome ?? monthData?.totalIncome}</h3>
+            <h3 className="amount positive">
+              ₹{dashboardData?.totalIncome ?? monthData?.totalIncome}
+            </h3>
           </div>
         </div>
         <div className="summary-item">
@@ -264,46 +360,53 @@ function BalanceCard() {
           </div>
           <div className="text">
             <p>Total Expenses</p>
-            <h3 className="amount negative">₹{dashboardData?.totalExpense ?? monthData?.totalExpense}</h3>
+            <h3 className="amount negative">
+              ₹{dashboardData?.totalExpense ?? monthData?.totalExpense}
+            </h3>
           </div>
         </div>
       </div>
       {toggle === "D" && (
-  <>
-    {isFetching ? (
-      <SkeletonCard /> // Render a skeleton for TransactionInfo while fetching
-    ) : (
-      <TransactionInfo
-        transactionRef={transactionRef}
-        expense={dashboardData.transactionsByType.EXPENSE}
-        income={dashboardData.transactionsByType.INCOME}
-      />
-    )}
-  </>
-)}
+        <>
+          {isFetching ? (
+            <SkeletonCard /> // Render a skeleton for TransactionInfo while fetching
+          ) : (
+            <TransactionInfo
+              transactionRef={transactionRef}
+              expense={dashboardData.transactionsByType.EXPENSE}
+              income={dashboardData.transactionsByType.INCOME}
+            />
+          )}
+        </>
+      )}
 
-{toggle === "M" && (
-  <div style={{ padding: "10px", display: "flex", gap: "20px", flexDirection: "column" }}>
-    {monthFetching ? (
-      <>
-        {[...Array(3)].map((_, index) => (
-          <MonthlyInfoSkeleton key={index} />
-        ))}
-      </>
-    ) : (
-      monthData?.dailySummaries?.map((val, index) => (
-        <MonthlyInfo
-          key={index}
-          val={val}
-          handleToggle={handleToggle}
-          handleDateChange={handleDateChange}
-        />
-      ))
-    )}
-  </div>
-)}
-
-
+      {toggle === "M" && (
+        <div
+          style={{
+            padding: "10px",
+            display: "flex",
+            gap: "20px",
+            flexDirection: "column",
+          }}
+        >
+          {monthFetching ? (
+            <>
+              {[...Array(3)].map((_, index) => (
+                <MonthlyInfoSkeleton key={index} />
+              ))}
+            </>
+          ) : (
+            monthData?.dailySummaries?.map((val, index) => (
+              <MonthlyInfo
+                key={index}
+                val={val}
+                handleToggle={handleToggle}
+                handleDateChange={handleDateChange}
+              />
+            ))
+          )}
+        </div>
+      )}
     </div>
   );
 }
