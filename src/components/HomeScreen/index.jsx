@@ -13,7 +13,7 @@ const HomeScreen = () => {
         ></iframe>
       </div>
       <div style={{ backgroundColor: '#232323', padding: '20px', textAlign: 'center', color: '#fff' }}>
-        <p style={{ fontSize: '16px', margin: '0' }}>We hope to see you again soon. <a href='/login' style={{color:"white"}}>Coming Soon</a> for more details.</p>
+        <p style={{ fontSize: '16px', margin: '0' }}>We hope to see you again soon. <a href='/login' style={{color:"#9A9A9A",textDecoration:"none"}}>Coming Soon</a> for more details.</p>
       </div>
     </div>
   );

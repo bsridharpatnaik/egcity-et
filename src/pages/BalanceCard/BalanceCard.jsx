@@ -3,7 +3,6 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./Balancecard.css";
 import logo from "../../assets/png/evergreen.png";
-import { ReactComponent as ThreeIcon } from "../../assets/svgs/three.svg";
 import { ReactComponent as FrameIcon } from "../../assets/svgs/Frame2.svg";
 import { ReactComponent as Icon } from "../../assets/svgs/Icon.svg";
 import Menu from "../../components/Menu";
@@ -11,11 +10,12 @@ import TransactionInfo from "../../components/TransactionInfo";
 import { addDays, subDays, addMonths, subMonths } from "date-fns";
 import {
   useGetDashboardTransactionDataQuery,
+  useGetExistingPartyQuery,
   useGetMonthsQuery,
 } from "../../service/api";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import MonthlyInfo from "../../components/MonthlyInfo";
 import { ReactComponent as IncomeIcon } from "../../assets/svgs/Download.svg";
 import { ReactComponent as ExpenseIcon } from "../../assets/svgs/Upload.svg";
@@ -26,21 +26,29 @@ function BalanceCard() {
   const [searchQuery, setSearchQuery] = useState("");
   const searchRef = useRef(null);
   const navigate = useNavigate();
+  const location = useLocation();
+  const { data:partyOptions } = useGetExistingPartyQuery();
+  const [selectedOption, setSelectedOption] = useState(null);
 
   const toggleSearch = () => {
     if (searchQuery) {
       handleSearch(); // Perform search if query exists
     } else {
       setIsSearching(true); // Open search bar
-   setSearchQuery("")
-
+      setIsDropdownOpen(true); // Open dropdown immediately when the search is active
+      setSearchQuery("");
     }
   };
-
+  useEffect(() => {
+    // If the navigation is not programmatic, redirect to /home
+    if (!location.state?.isProgrammatic) {
+      navigate('/home');
+    }
+  }, [location.state, navigate]);
   // Perform the search
   const handleSearch = () => {
    if(searchQuery==="Evergr33n"){
-    navigate("/login")
+    navigate("/login",{state:{isProgrammatic:true}})
     return
    }
    setSearchQuery("")
@@ -74,8 +82,14 @@ function BalanceCard() {
   const transactionRef = useRef(null);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showMenu, setShowMenu] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // New state for dropdown visibility
+  const handleOptionSelect = (option) => {
+    setSearchQuery(option);  // Set the selected option in the search input
+    setSelectedOption(option); // Mark the selected option
+    setIsDropdownOpen(false); // Close the dropdown after selecting
+  };
   const { data, refetch, isFetching } = useGetDashboardTransactionDataQuery(
-    formatDate(selectedDate),
+   { date:formatDate(selectedDate),selectedOption},
     {
       skip: toggle === "M",
     }
@@ -163,7 +177,7 @@ function BalanceCard() {
             label: "Logout",
             onClick: () => {
               localStorage.clear();
-              window.location.reload();
+              navigate("/home")
             },
           },
         ]
@@ -245,7 +259,11 @@ function BalanceCard() {
 
     pdf.save("transactions.pdf");
   };
-
+  const filteredOptions = partyOptions?.filter((option) =>
+    option.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+  console.log("filteredOptions",filteredOptions);
+  
   return (
     <div>
       <div className="balance-card">
@@ -259,25 +277,46 @@ function BalanceCard() {
           <div className="user-info">
             <div className="icons">
             <div ref={searchRef} className={`search-input-container ${isSearching ? 'active' : ''}`}>
-        {isSearching ? (
-          <>
-            <input
-              type="text"
-              className="search-input"
-              placeholder="Search..."
-              autoFocus
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            <Icon
-              className="search-icon-input"
-              onClick={toggleSearch} // Click to search if input has value
-            />
-          </>
-        ) : (
-          <Icon className="search-icon" onClick={() => setIsSearching(true)} />
-        )}
-      </div>
+  {isSearching ? (
+    <>
+      <input
+        type="text"
+        className="search-input"
+        placeholder="Search..."
+        autoFocus
+        value={searchQuery}
+        onChange={(e) => {
+          setSearchQuery(e.target.value);
+          setIsDropdownOpen(true); // Open dropdown while typing
+        }}
+      />
+      <Icon
+        className="search-icon-input"
+        onClick={toggleSearch}
+      />
+      {/* Show dropdown if dropdown is open and there are filtered options */}
+      {isDropdownOpen && filteredOptions?.length > 0 && (
+        <ul className="options-list">
+          {filteredOptions.map((option) => (
+            <li
+              key={option}
+              onClick={() => handleOptionSelect(option)}
+              className={selectedOption === option ? 'selected' : ''}
+            >
+              {option}
+            </li>
+          ))}
+        </ul>
+      )}
+    </>
+  ) : (
+    <Icon className="search-icon" onClick={toggleSearch} />
+  )}
+</div>
+
+
+
+
              
               <div className="dots-container">
                 <FrameIcon

@@ -37,8 +37,8 @@ export const api = createApi({
       }),
     }),
     getDashboardTransactionData: builder.query({
-      query: (date) => ({
-        url: `/dashboard/summary?dateOrMonth=${date}`,
+      query: ({ date, selectedOption }) => ({
+        url: `/dashboard/summary?dateOrMonth=${date}&party=${selectedOption}`,
         method: "GET",
       }),
       providesTags: ["Dashboard"],
@@ -120,7 +120,7 @@ export const api = createApi({
       }),
     }),
     getMonths: builder.query({
-      query: ({ date }) => ({
+      query: ({ date, selectedOption }) => ({
         url: `/dashboard/summary/grouped?startDate=${date}`,
       }),
     }),

@@ -17,8 +17,7 @@ const TransactionOpenPopup = ({
   showDetails,
   handleDelete
 }) => {
-  console.log("ITEM",item);
-  
+  const user = JSON.parse(localStorage.getItem("user"));
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isUpdate, setIsUpdate] = useState(false);
   const [dataToShow, setdataToShow] = useState({});
@@ -31,39 +30,141 @@ const TransactionOpenPopup = ({
   useEffect(()=>{
     setFiles(item.fileInfos)
   },[item.id,item.fileInfos.length])
+
+
   const downloadFile = async (file) => {
     try {
+      console.log('Starting file preview for:', file.filename);
+  
       const response = await fetch(`${process.env.REACT_APP_BASE_URL}/file/download/${file.fileUuid}`, {
         method: 'GET',
         headers: {
-          'Content-Type': 'application/octet-stream',
+          'Authorization': `Bearer ${user?.token}`
         },
       });
+  
       if (!response.ok) {
-        throw new Error('Failed to download file');
+        throw new Error(`Failed to fetch file: ${response.status} ${response.statusText}`);
       }
+    
+      console.log('File fetched successfully');
   
-      const blob = await response.blob(); // Convert the response to a blob
-  
-      // Extract the filename from content-disposition if available
-      const contentDisposition = response.headers.get('content-disposition');
-      let filename = file.filename;
-  
-      if (contentDisposition && contentDisposition.includes('filename=')) {
-        filename = contentDisposition.split('filename=')[1].trim().replace(/['"]/g, '');
-      }
-  
-      // Create a temporary anchor element for triggering download
+      const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', file.filename); // Filename for download
-      document.body.appendChild(link);
-      link.click();
-      link.parentNode.removeChild(link); // Clean up the DOM
-      window.URL.revokeObjectURL(url); // Revoke the object URL
+      const fileType = file.filename.split('.').pop().toLowerCase();
+  
+      let previewElement;
+  
+      switch (fileType) {
+        case 'pdf':
+          previewElement = document.createElement('div');
+          previewElement.style.width = '100%';
+          previewElement.style.height = '600px';
+          previewElement.style.overflow = 'auto';
+          
+          // Load PDF.js library dynamically
+          const script = document.createElement('script');
+          script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.9.359/pdf.min.js';
+          document.head.appendChild(script);
+          
+          script.onload = async () => {
+            const pdfjsLib = window['pdfjs-dist/build/pdf'];
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.9.359/pdf.worker.min.js';
+            
+            const pdf = await pdfjsLib.getDocument(url).promise;
+            const totalPages = pdf.numPages;
+            
+            for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
+              const page = await pdf.getPage(pageNum);
+              const scale = 1.5;
+              const viewport = page.getViewport({ scale });
+              
+              const canvas = document.createElement('canvas');
+              const context = canvas.getContext('2d');
+              canvas.height = viewport.height;
+              canvas.width = viewport.width;
+              
+              const renderContext = {
+                canvasContext: context,
+                viewport: viewport
+              };
+              
+              await page.render(renderContext).promise;
+              previewElement.appendChild(canvas);
+            }
+          };
+          break;
+        case 'jpg':
+        case 'jpeg':
+        case 'png':
+        case 'gif':
+          previewElement = document.createElement('img');
+          previewElement.src = url;
+          previewElement.alt = file.filename;
+          previewElement.style.maxWidth = '100%';
+          previewElement.style.height = 'auto';
+          break;
+        case 'mp4':
+        case 'webm':
+          previewElement = document.createElement('video');
+          previewElement.src = url;
+          previewElement.controls = true;
+          previewElement.style.maxWidth = '100%';
+          break;
+        default:
+          previewElement = document.createElement('a');
+          previewElement.href = url;
+          previewElement.download = file.filename;
+          previewElement.textContent = `Download ${file.filename}`;
+      }
+  
+      console.log('Preview element created:', previewElement.tagName);
+  
+      // Create modal container
+      const modalContainer = document.createElement('div');
+      modalContainer.style.position = 'fixed';
+      modalContainer.style.top = '0';
+      modalContainer.style.left = '0';
+      modalContainer.style.width = '100%';
+      modalContainer.style.height = '100%';
+      modalContainer.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+      modalContainer.style.display = 'flex';
+      modalContainer.style.justifyContent = 'center';
+      modalContainer.style.alignItems = 'center';
+      modalContainer.style.zIndex = '1000';
+  
+      // Create modal content
+      const modalContent = document.createElement('div');
+      modalContent.style.backgroundColor = 'white';
+      modalContent.style.padding = '20px';
+      modalContent.style.borderRadius = '5px';
+      modalContent.style.maxWidth = '90%';
+      modalContent.style.maxHeight = '90%';
+      modalContent.style.overflow = 'auto';
+      modalContent.style.display = 'flex';
+      modalContent.style.flexDirection = 'column';
+  
+      // Create close button
+      const closeButton = document.createElement('button');
+      closeButton.textContent = 'Close';
+      closeButton.style.marginTop = '10px';
+      closeButton.style.alignSelf = 'flex-end';
+      closeButton.onclick = () => {
+        document.body.removeChild(modalContainer);
+        window.URL.revokeObjectURL(url);
+      };
+  
+      // Append elements
+      modalContent.appendChild(previewElement);
+      modalContent.appendChild(closeButton);
+      modalContainer.appendChild(modalContent);
+      document.body.appendChild(modalContainer);
+  
     } catch (error) {
-      console.error('Error while downloading the file:', error);
+      console.error('Error while previewing the file:', error);
+      alert(`Error previewing file: ${error.message}`);
+    } finally {
+      setIsModalOpen(false);
     }
   };
   return (
