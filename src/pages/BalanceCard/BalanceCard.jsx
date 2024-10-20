@@ -98,7 +98,6 @@ function BalanceCard() {
     data: monthData,
     refetch: monthRefetch,
     isFetching: monthFetching,
-
   } = useGetMonthsQuery(
     { date: formatDate(selectedDate) },
     {
