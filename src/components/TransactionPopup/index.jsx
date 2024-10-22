@@ -5,7 +5,7 @@ import { ReactComponent as Cross } from "../../assets/svgs/cross.svg";
 import { ReactComponent as Edit } from "../../assets/svgs/EditModal.svg";
 import { ReactComponent as Delete } from "../../assets/svgs/DeleteModal.svg";
 import AddTransactionModal from "../TransactionalModal";
-
+import * as XLSX from "xlsx"
 const TransactionOpenPopup = ({
   isOpen,
   activeTab,
@@ -56,6 +56,75 @@ const TransactionOpenPopup = ({
       let previewElement;
   
       switch (fileType) {
+        case 'xlsx':
+        case 'xls':
+          previewElement = document.createElement('div');
+          previewElement.style.width = '100%';
+          previewElement.style.height = '600px';
+          previewElement.style.overflow = 'auto';
+          
+          // Load SheetJS library dynamically
+          const script = document.createElement('script');
+          script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+          document.head.appendChild(script);
+          
+          script.onload = async () => {
+            const arrayBuffer = await blob.arrayBuffer();
+            const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+            
+            // Create a table container
+            const tableContainer = document.createElement('div');
+            tableContainer.style.padding = '10px';
+            
+            // Process each sheet in the workbook
+            workbook.SheetNames.forEach((sheetName, index) => {
+              const sheet = workbook.Sheets[sheetName];
+              
+              // Create sheet header
+              const sheetHeader = document.createElement('h3');
+              sheetHeader.textContent = `Sheet: ${sheetName}`;
+              sheetHeader.style.margin = '20px 0 10px 0';
+              sheetHeader.style.padding = '5px';
+              sheetHeader.style.backgroundColor = '#f0f0f0';
+              
+              // Convert sheet data to HTML table
+              const htmlTable = XLSX.utils.sheet_to_html(sheet, { editable: false });
+              const tableWrapper = document.createElement('div');
+              tableWrapper.innerHTML = htmlTable;
+              
+              // Style the table
+              const table = tableWrapper.querySelector('table');
+              if (table) {
+                table.style.borderCollapse = 'collapse';
+                table.style.width = '100%';
+                table.style.marginBottom = '20px';
+                
+                // Style table cells
+                const cells = table.getElementsByTagName('td');
+                Array.from(cells).forEach(cell => {
+                  cell.style.border = '1px solid #ddd';
+                  cell.style.padding = '8px';
+                  cell.style.textAlign = 'left';
+                });
+                
+                // Style table headers
+                const headers = table.getElementsByTagName('th');
+                Array.from(headers).forEach(header => {
+                  header.style.border = '1px solid #ddd';
+                  header.style.padding = '8px';
+                  header.style.textAlign = 'left';
+                  header.style.backgroundColor = '#f4f4f4';
+                });
+              }
+              
+              tableContainer.appendChild(sheetHeader);
+              tableContainer.appendChild(tableWrapper);
+            });
+            
+            previewElement.appendChild(tableContainer);
+          };
+          break;
+          
         case 'pdf':
           previewElement = document.createElement('div');
           previewElement.style.width = '100%';
@@ -63,11 +132,11 @@ const TransactionOpenPopup = ({
           previewElement.style.overflow = 'auto';
           
           // Load PDF.js library dynamically
-          const script = document.createElement('script');
-          script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.9.359/pdf.min.js';
-          document.head.appendChild(script);
+          const pdfScript = document.createElement('script');
+          pdfScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.9.359/pdf.min.js';
+          document.head.appendChild(pdfScript);
           
-          script.onload = async () => {
+          pdfScript.onload = async () => {
             const pdfjsLib = window['pdfjs-dist/build/pdf'];
             pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.9.359/pdf.worker.min.js';
             
@@ -94,6 +163,7 @@ const TransactionOpenPopup = ({
             }
           };
           break;
+  
         case 'jpg':
         case 'jpeg':
         case 'png':
@@ -104,6 +174,7 @@ const TransactionOpenPopup = ({
           previewElement.style.maxWidth = '100%';
           previewElement.style.height = 'auto';
           break;
+  
         case 'mp4':
         case 'webm':
           previewElement = document.createElement('video');
@@ -111,6 +182,7 @@ const TransactionOpenPopup = ({
           previewElement.controls = true;
           previewElement.style.maxWidth = '100%';
           break;
+  
         default:
           previewElement = document.createElement('a');
           previewElement.href = url;

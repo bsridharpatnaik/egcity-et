@@ -261,7 +261,6 @@ function BalanceCard() {
   const filteredOptions = partyOptions?.filter((option) =>
     option.toLowerCase().includes(searchQuery.toLowerCase())
   );
-  console.log("filteredOptions",filteredOptions);
   
   return (
     <div>
