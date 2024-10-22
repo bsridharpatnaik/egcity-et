@@ -5,7 +5,7 @@ const HomeScreen = () => {
     <div style={{ width: '100%', height: '100vh', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
       <div style={{ flex: 1, overflow: 'hidden' }}>
         <iframe 
-          src="https://evergreencity.in/" 
+          src="https://nexus360.in/" 
           width="100%" 
           height="100%" 
           style={{ border: 'none' }}
