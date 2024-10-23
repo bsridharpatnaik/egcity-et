@@ -47,7 +47,7 @@ const Documentation = () => {
     if(folderData.parentFolderId){
       setFolderId(folderData.parentFolderId)
     }else{
-      navigate("/dashboard",{state:{isProgrmatic:true}})
+      navigate("/dashboard",{state:{isProgrammatic:true}})
     }
   };
 

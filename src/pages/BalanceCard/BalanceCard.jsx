@@ -159,7 +159,7 @@ function BalanceCard() {
     {
       label: "Documentation Vault",
       onClick: () => {
-        navigate("/documentation-vault");
+        navigate("/documentation-vault",{state : {isProgrammatic:true}});
         setShowMenu(false);
       },
     },
@@ -167,7 +167,7 @@ function BalanceCard() {
       label: "History",
       onClick: () => {
         setShowMenu(false);
-        navigate("/history");
+        navigate("/history",{state : {isProgrammatic:true}});
       },
     },
     ...(user?.username && user?.username !== "anonymous"

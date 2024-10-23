@@ -21,7 +21,7 @@ const History = () => {
     <div className='wrapper'>
       <div className='wrapper_container_heading'>
         <div className='text_container'>
-          <Left onClick={() => navigate("/dashboard",{state:{isProgrmatic:true}})} />
+          <Left onClick={() => navigate("/dashboard",{state:{isProgrammatic:true}})} />
           <h5>History</h5>
         </div>
       </div>

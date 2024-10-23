@@ -29,7 +29,7 @@ const TransactionOpenPopup = ({
   };
   useEffect(()=>{
     setFiles(item.fileInfos)
-  },[item.id,item.fileInfos.length])
+  },[item?.id,item?.fileInfos?.length])
 
 
   const downloadFile = async (file) => {
