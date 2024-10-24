@@ -371,3 +371,28 @@ input:not([type="image" i], [type="range" i], [type="checkbox" i], [type="radio"
   cursor: pointer;
   margin-left: 15px;
 }
+
+.custom-date-filter {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.date-input label {
+  display: flex;
+  flex-direction: column;
+  color: #D1D4DB;
+  font-size: 12px;
+  margin-bottom: 5px;
+}
+
+.date-input input {
+  padding: 8px;
+  border-radius: 5px;
+  border: none;
+  background-color: #4B4F63;
+  color: #D1D4DB;
+  width: 100%;
+}

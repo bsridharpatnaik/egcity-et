@@ -11,6 +11,7 @@ import { addDays, subDays, addMonths, subMonths } from "date-fns";
 import {
   useGetDashboardTransactionDataQuery,
   useGetExistingPartyQuery,
+  useGetFilteredQuery,
   useGetMonthsQuery,
 } from "../../service/api";
 import jsPDF from "jspdf";
@@ -21,12 +22,15 @@ import { ReactComponent as IncomeIcon } from "../../assets/svgs/Download.svg";
 import { ReactComponent as ExpenseIcon } from "../../assets/svgs/Upload.svg";
 import SkeletonCard from "../../components/Skeleton";
 import MonthlyInfoSkeleton from "../../components/Skeleton/SkeletonMonth";
+import moment from "moment/moment";
 function BalanceCard() {
   const [isSearching, setIsSearching] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const searchRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
+  const [startDate, setStartDate] = useState(moment().startOf('month').format('YYYY-MM-DD'));
+  const [endDate, setEndDate] = useState(moment().endOf('month').format('YYYY-MM-DD'));
   const { data:partyOptions } = useGetExistingPartyQuery();
   const [selectedOption, setSelectedOption] = useState(null);
 
@@ -91,7 +95,7 @@ function BalanceCard() {
   const { data, refetch, isFetching } = useGetDashboardTransactionDataQuery(
    { date:formatDate(selectedDate),selectedOption},
     {
-      skip: toggle === "M",
+      skip: toggle === "M" || toggle==="C",
     }
   );
   const {
@@ -99,14 +103,37 @@ function BalanceCard() {
     refetch: monthRefetch,
     isFetching: monthFetching,
   } = useGetMonthsQuery(
-    { date: formatDate(selectedDate) },
+    { date: formatDate(selectedDate),selectedOption },
     {
-      skip: toggle === "D",
+      skip: toggle === "D" || toggle==="C",
     }
   );
 
+  const handleStartDateChange = (e) => {
+    setStartDate(e.target.value);
+  };
+
+  const handleEndDateChange = (e) => {
+    setEndDate(e.target.value);
+  };
+  const {
+    data: filteredData,
+    refetch: filteredRefetch,
+    isFetching: filterFetching,
+  } = useGetFilteredQuery(
+    { startDate: formatDate(startDate), endDate : formatDate(endDate),selectedOption },
+    {
+      skip: toggle === "D" || toggle==="M",
+    }
+  );
+  console.log("filteredData",filteredData);
+  
   const handleToggle = (value) => {
     setToggle(value);
+    if (value === 'C') {
+      setStartDate(moment().startOf('month').format('YYYY-MM-DD'));
+      setEndDate(moment().endOf('month').format('YYYY-MM-DD'));
+    }
   };
 
   function formatDate(dateString) {
@@ -119,13 +146,13 @@ function BalanceCard() {
   }
 
   const handleDateChange = async (date) => {
-    // const formattedDate = await formatDate(date)
     setSelectedDate(date);
-    // console.log(formattedDate,"formattedDate")
     if (toggle === "D") {
       refetch();
-    } else {
+    } else if(toggle === "M") {
       monthRefetch();
+    }else{
+      filteredRefetch()
     }
   };
 
@@ -148,6 +175,7 @@ function BalanceCard() {
   const user = JSON.parse(localStorage.getItem("user"));
 
   const menuRef = useRef(null);
+
   const items = [
     {
       label: "Export to PDF",
@@ -258,9 +286,12 @@ function BalanceCard() {
 
     pdf.save("transactions.pdf");
   };
+
   const filteredOptions = partyOptions?.filter((option) =>
     option.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const dataToRender=monthData?.dailySummaries?.length ? monthData?.dailySummaries :  filteredData?.dailySummaries
   
   return (
     <div>
@@ -345,8 +376,40 @@ function BalanceCard() {
             >
               M
             </div>
+            <div
+              className={`toggle-btn ${toggle === "C" ? "selected" : ""}`}
+              onClick={() => handleToggle("C")}
+            >
+              C
+            </div>
           </div>
+         
         </div>
+       
+    {toggle === 'C' && (
+      <div className="custom-date-filter">
+        <div className="date-input">
+          <label>
+            Start Date:
+            <input
+              type="date"
+              value={startDate}
+              onChange={handleStartDateChange}
+            />
+          </label>
+        </div>
+        <div className="date-input">
+          <label>
+            End Date:
+            <input
+              type="date"
+              value={endDate}
+              onChange={handleEndDateChange}
+            />
+          </label>
+        </div>
+      </div>
+    )}
         <div className="date-selector">
           <button className="prev-date" onClick={handlePrevDate}>
             {"<"}
@@ -414,7 +477,7 @@ function BalanceCard() {
         </>
       )}
 
-      {toggle === "M" && (
+      {(toggle === "M" || toggle==="C") && (
         <div
           style={{
             padding: "10px",
@@ -423,14 +486,14 @@ function BalanceCard() {
             flexDirection: "column",
           }}
         >
-          {monthFetching ? (
+          {monthFetching || filterFetching ? (
             <>
               {[...Array(3)].map((_, index) => (
                 <MonthlyInfoSkeleton key={index} />
               ))}
             </>
           ) : (
-            monthData?.dailySummaries?.map((val, index) => (
+            dataToRender?.map((val, index) => (
               <MonthlyInfo
                 key={index}
                 val={val}
